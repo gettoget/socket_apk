@@ -50,6 +50,37 @@ export default [
       }
     ]
   },
+
+  {
+    path: '/socketAPK',
+    name: 'socketAPK',
+    component: Main,
+    meta: {
+          title: '广告管理',
+          icon: 'md-home'
+        },
+    children: [
+      {
+        path: '/upAD',
+        name: 'upAD',
+        meta: {
+          title: '新建广告',
+          icon: 'md-home'
+        },
+        component: () => import('@/VsocketAPK/upAD')
+      },
+      {
+        path: '/managerAD',
+        name: 'managerAD',
+        meta: {
+          title: '发布记录',
+          icon: 'md-home'
+        },
+        component: () => import('@/VsocketAPK/managerAD')
+      }
+    ]
+  },
+
   {
     path: '/iview',
     name: 'iview',
