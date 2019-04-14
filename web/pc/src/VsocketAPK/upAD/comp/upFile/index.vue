@@ -1,5 +1,7 @@
 <template>
-  <div style="width: 100px;text-align: center">
+  <!--<div style="width: 160px;text-align: center" >-->
+  <div class="box_row" style="text-align: center" >
+
     <div class="upLineBox" v-if="Admodel>0">
       <div class="Tit">
         屏幕一文件上传
@@ -18,8 +20,16 @@
       </div>
       <load-file :FlieUrl="upImg[2]" @handleSuccess="(url)=>{handleSuccess(url,2)}"></load-file>
     </div>
-    <div v-if="upbutton">
-      <Button type="primary" long @click="handleSuccessEmit">SUBMIT</Button>
+    <div v-if="upbutton" style="line-height: 50px">
+      <div>
+        <Button type="primary" size="small" long @click="handleSuccessEmit">提交</Button>
+      </div>
+      <div>
+        <load-file :VOICE="true"  @handleSuccess="(url)=>{handleSuccess(url,'VOICE')}">
+          <Button v-if="!upVOICE" type="primary" size="small" long @click="">上传音频</Button>
+          <Button v-else type="success" size="small" long @click="">上传完成</Button>
+        </load-file>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +53,8 @@
           // 1: '',
           // 2: ''
         },
-        upbutton: false
+        upbutton: false,
+        upVOICE:false
       }
     },
     watch: {
@@ -58,7 +69,9 @@
       handleSuccess(url, model) {
         this.file[model] = url
         this.upImg[model] = url
-        console.log(this.upImg);
+        if(model=='VOICE' && this.upImg['VOICE']){
+          this.upVOICE = true
+        }
         if (this.file.length == this.Admodel && this.file.length > 0) {
           this.upbutton = true
         } else {
@@ -82,6 +95,7 @@
         this.upImg = newUpImg
         this.file=[]
         this.upbutton = false
+        this.upVOICE = false
       },
       handleSuccessEmit() {
         this.$emit('handleSuccess', this.upImg)
@@ -91,6 +105,10 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="less">
+  .upLineBox{
+    border: solid 1px #ededed;
+    box-shadow: 5px 5px 5px #ededed;
+    margin: 8px 8px 8px 0;
+  }
 </style>
