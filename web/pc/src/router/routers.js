@@ -50,7 +50,25 @@ export default [
       }
     ]
   },
-
+  {
+    path: '/manage-ad',
+    name: 'manageAd',
+    meta: {
+      title: '广告为理'
+    },
+    component: Main,
+    children: [
+      {
+        path: '/newad',
+        name: 'newAd',
+        meta: {
+          title: '广告位管理',
+          icon: 'md-home'
+        },
+        component: () => import('@/VsocketAPK/NewAD')
+      },
+    ]
+  },
   {
     path: '/socketAPK',
     name: 'socketAPK',

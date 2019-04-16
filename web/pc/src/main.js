@@ -30,6 +30,14 @@ Vue.prototype.$http = http;
 import swal from 'sweetalert2';
 Vue.prototype.swal = swal;
 
+//自定义全局方法
+import AF from '@/libs/CommonMethod'
+Vue.prototype.AF = AF;
+
+import pagerTit from './components/header'
+Vue.component('pagerTit',pagerTit)
+
+
 
 // 时间转换
 import moment from 'moment'
