@@ -3,120 +3,34 @@
 </style>
 <template>
   <div class="updateAd box_col">
-    <div class="pagerTit" @click="getClick()">
-      广告上传
-    </div>
-    <div class="adTemp box_row">
-      <div class="model1 modelMargin spet1" @click="getModel(1)">
-        1
-      </div>
-      <div class="model2 modelMargin box_row" @click="getModel(2)">
-        <div class="box_row_100 spet1">
-          1
-        </div>
-        <div class="box_row_100 spet2">
-          2
-        </div>
-      </div>
-      <div class="model3 modelMargin box_col" @click="getModel(3)">
-        <div class="box_col_100 spet1">
-          1
-        </div>
-        <div class="box_col_100">
-          <div class="box_row" style="height: 100%">
-            <div class="box_row_100 spet2">
-              2
-            </div>
-            <div class="box_row_100 spet3">
-              3
-            </div>
-          </div>
+    <div class="pagerTit box_row">
+      <pager-tit title="广告管理"></pager-tit>
+      <div class="box_row_100">
+        <div class="box_row rowRight colCenter">
+          <Button class="itMargin" type="primary">新建广告</Button>
         </div>
       </div>
     </div>
-    <div class="box_col_100" style="">
-      <div>
-        <Row :gutter="16">
-          <Col span="4" v-for="(it,index) in file" :key="index">
-            <div class="box_row">
-              <div class="box_row_100">
-                第{{(index+1)}}展示屏
-              </div>
-              <div class="removeSty">
-                <Button type="error" shape="circle" size="small" long @click="itenRemove(index)">移除</Button>
-              </div>
-            </div>
-            <div class="textshowLine" style="width: 100%;display: inline-block">
-              音频:
-              <span v-if="it.VOICE">
-                {{it.VOICE.substring(it.VOICE.length/2,it.VOICE.length)}}
-              </span>
-              <span>
-                没有音频文件
-              </span>
-            </div>
-            <div v-if="val!='VOICE'" v-for="(ls,val) in it" :key="val">
-              <div class="box_row">
-                <div class="box_row_100">
-                  第{{ parseInt(val) +1}}板块
-                </div>
+    <div class="box_col_autoY">
+      <Row :gutter="16">
+        <Col span="6" v-for="(it) in 5">
+          <ad-card></ad-card>
 
-              </div>
-              <div>
-                <img :src="ls" height="58px" alt="">
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </div>
-      <up-file @handleSuccess="handleSuccess"></up-file>
-      <!--<div class="settingAd">-->
-      <!--<div class="title">-->
-      <!--基础设置-->
-      <!--</div>-->
-      <!--<div class="box_row">-->
-      <!--<div class="setItem">-->
-      <!--<div class="itemTit">-->
-      <!--切换时间-->
-      <!--</div>-->
-      <!--<div>-->
-      <!--<Input value="" placeholder="Enter something..."/>-->
-      <!--</div>-->
-      <!--</div>-->
-      <!--<div>-->
-      <!--<div class="itemTit">-->
-      <!--发布时间-->
-      <!--</div>-->
-      <!--<div>-->
-      <!--<DatePicker type="datetime" :options="DatePickerOptions" placeholder="Select date"-->
-      <!--style="width: 200px"></DatePicker>-->
-      <!--</div>-->
-      <!--</div>-->
-      <!--<div class="setItem">-->
-      <!--<div class="itemTit">-->
-      <!--有效时间-->
-      <!--</div>-->
-      <!--<div>-->
-      <!--<InputNumber v-model="form.yxTime" :min="1"></InputNumber>-->
-      <!--<Select v-model="form.dateTypSel" style="width: 70px">-->
-      <!--<Option value="mm">分钟</Option>-->
-      <!--<Option value="HH">小时</Option>-->
-      <!--<Option value="DD">天</Option>-->
-      <!--</Select>-->
-      <!--</div>-->
-      <!--</div>-->
-      <!--</div>-->
-      <!--</div>-->
+        </Col>
+
+      </Row>
     </div>
+      <!--<up-file @handleSuccess="handleSuccess"></up-file>-->
   </div>
 </template>
 
 <script>
   import upFile from './comp/upFile'
+  import adCard from './comp/AdCard'
 
   export default {
     name: "index",
-    components: {upFile},
+    components: {upFile,adCard},
     data() {
       return {
         Admodel: 0,

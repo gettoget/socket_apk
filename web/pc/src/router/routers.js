@@ -50,25 +50,25 @@ export default [
       }
     ]
   },
-  {
-    path: '/manage-ad',
-    name: 'manageAd',
-    meta: {
-      title: '广告为理'
-    },
-    component: Main,
-    children: [
-      {
-        path: '/newad',
-        name: 'newAd',
-        meta: {
-          title: '广告位管理',
-          icon: 'md-home'
-        },
-        component: () => import('@/VsocketAPK/NewAD')
-      },
-    ]
-  },
+  // {
+  //   path: '/manage-ad',
+  //   name: 'manageAd',
+  //   meta: {
+  //     title: '广告为理'
+  //   },
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: '/newad',
+  //       name: 'newAd',
+  //       meta: {
+  //         title: '广告位管理',
+  //         icon: 'md-home'
+  //       },
+  //       component: () => import('@/VsocketAPK/NewAD')
+  //     },
+  //   ]
+  // },
   {
     path: '/socketAPK',
     name: 'socketAPK',
@@ -79,10 +79,19 @@ export default [
         },
     children: [
       {
+        path: '/newad',
+        name: 'newAd',
+        meta: {
+          title: '广告位管理',
+          icon: 'md-home'
+        },
+        component: () => import('@/VsocketAPK/NewAD')
+      },
+      {
         path: '/upAD',
         name: 'upAD',
         meta: {
-          title: '新建广告',
+          title: '广告管理',
           icon: 'md-home'
         },
         component: () => import('@/VsocketAPK/upAD')
