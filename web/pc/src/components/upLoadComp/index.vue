@@ -13,15 +13,14 @@
     <!--:on-exceeded-size="handleMaxSize"-->
     <!--multiple-->
     <!--type="drag"-->
-    <!--style="display: inline-block;width:58px;">-->
+    <!--style="">-->
     <div @click="handleError">
       <slot>
-        <!--<div style="display: inline-block;width:58px;">-->
-          <div style="display: inline-block;width: 58px;height:58px;line-height: 58px;">
+          <div style="display: inline-block;text-align: center;
+          width: 58px;height:58px;line-height: 58px;">
             <img v-if="FlieUrl" :src="FlieUrl" width="100%" height="100%" alt="">
             <Icon v-else type="ios-cloud-upload" size="40" style="color: #3399ff"></Icon>
           </div>
-        <!--</div>-->
       </slot>
     </div>
     <!--</Upload>-->

@@ -15,64 +15,32 @@
       <Row :gutter="16">
         <Col span="6" v-for="(it) in 5">
           <ad-card></ad-card>
-
         </Col>
-
       </Row>
     </div>
-      <!--<up-file @handleSuccess="handleSuccess"></up-file>-->
+    <component :is="compName"></component>
   </div>
 </template>
 
 <script>
-  import upFile from './comp/upFile'
   import adCard from './comp/AdCard'
 
+  import adGroup from './comp/addAdGroup'
   export default {
     name: "index",
-    components: {upFile,adCard},
+    components: {adCard,adGroup},
     data() {
-      return {
-        Admodel: 0,
-        DatePickerOptions: {
-          disabledDate(date) {
-            return date && date.valueOf() < Date.now();
-          }
-        },
-        file: [],
-        form: {
-          yxTime: 1,
-          dateTypSel: 'HH',
-        }
+      return {//adGroup
+        compName:"adGroup"
       }
     },
     watch: {
-      "form.yxTime": function (n, o) {
-        console.log(n);
-        console.log(o);
-        console.log(this.form.yxTime);
-        if (n < 1) {
-          this.$Message.warning('有效时间不能小于1！！！')
-          this.form.yxTime = ''
-        }
-      }
     },
     created() {
     },
     mounted() {
     },
     methods: {
-      getClick() {
-      },
-      getModel(val) {
-        this.Admodel = val
-      },
-      handleSuccess(flieList) {
-        this.file.push(flieList)
-      },
-      itenRemove(index) {
-        this.file.splice(index, 1)
-      }
     }
   }
 </script>
