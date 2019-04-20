@@ -7,7 +7,7 @@
       <pager-tit title="广告管理"></pager-tit>
       <div class="box_row_100">
         <div class="box_row rowRight colCenter">
-          <Button class="itMargin" type="primary">新建广告</Button>
+          <Button class="itMargin" type="primary" @click="adUp">新建广告</Button>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
     components: {adCard,adGroup},
     data() {
       return {//adGroup
-        compName:"adGroup"
+        compName:""
       }
     },
     watch: {
@@ -41,6 +41,9 @@
     mounted() {
     },
     methods: {
+      adUp(){
+        this.compName = 'adGroup'
+      }
     }
   }
 </script>

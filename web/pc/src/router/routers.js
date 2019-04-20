@@ -114,7 +114,8 @@ export default [
     component: Main,
     meta: {
       icon: 'logo-buffer',
-      title: 'iviewDemoComp'
+      title: 'iviewDemoComp',
+      hideInMenu:true
     },
     children: [
       {
