@@ -21,7 +21,7 @@
     </div>
 
     <div class="eventButSty">
-      <Button type="primary" class="itMargin" @click="compName='eventModel',modelType='scrn'">分屏模式设置</Button>
+      <Button type="primary" class="itMargin" @click="selectFP">分屏模式设置</Button>
       <Button type="success" class="itMargin">1号屏幕设置</Button>
       <Button type="success" class="itMargin">2号屏幕设置</Button>
       <Button type="success" class="itMargin">3号屏幕设置</Button>
@@ -46,7 +46,7 @@
             align: "center"
           },
           {
-            title: "设备编号",
+            title: "设备ID",
             key: "name"
           },
           {
@@ -70,7 +70,7 @@
             key: "gender"
           },
           {
-            title: "商家广告(1号屏幕)",
+            title: "(1号屏幕)",
             key: "",
             render: (h, p) => {
               return h('div', [
@@ -89,10 +89,10 @@
             }
           },
           {
-            title: "流动广告(2号屏幕)"
+            title: "(2号屏幕)"
           },
           {
-            title: "流动广告(3号屏幕)"
+            title: "(3号屏幕)"
           },
           {
             title: "分屏模式"
@@ -100,30 +100,23 @@
         ],
         tabData: [
           {
-            name: "John Brown",
-            age: 18,
-            address: "New York No. 1 Lake Park",
-            date: "2016-10-03"
-          },
-          {
-            name: "Jim Green",
-            age: 24,
-            address: "London No. 1 Lake Park",
-            date: "2016-10-01"
-          },
-          {
-            name: "Joe Black",
-            age: 30,
-            address: "Sydney No. 1 Lake Park",
-            date: "2016-10-02"
-          },
-          {
-            name: "Jon Snow",
-            age: 26,
-            address: "Ottawa No. 2 Lake Park",
-            date: "2016-10-04"
+            // "id": 2,//广告位id
+            // "admin_id": 1,//创建用户的id
+            // "device_key": "key2",//电视id
+            // "split_type": 0,
+            // "shop_name": "上海杨浦",
+            // "manager_name": "admin2",
+            // "phone": "12333334",
+            // "gender": "M",
+            // "online_status": 1,
+            // "online_status_change_time": 0,
+            // "online_check_time": 0,
+            // "deleted": 0,
+            // "createtime": 0,
+            // "updatetime": 0
           }
         ],
+        tabSelectAllList:[],
         modelType:"scrn",
         compName:""
       }
@@ -141,12 +134,37 @@
       })
     },
     methods: {
+      tabList(callback){
+        let Bol = false
+        if(this.tabSelectAllList.length>0){
+          Bol = true
+        }
+        callback && callback(Bol)
+
+      },
+      selectFP(){
+        var v = this
+        this.tabList((val)=>{
+          if(val)
+          {
+            v.compName='eventModel';
+            v.modelType='scrn';
+          }
+          else{
+            v.swal({
+              title:"请选择要编辑的广告位",
+              type:"warning"
+            })
+          }
+        })
+      },
       tabSelectAll(list){
         console.log(list);
+        this.tabSelectAllList = list
       },
       tabSelect(list, row) {
         console.log(list);
-        console.log(row);
+        this.tabSelectAllList = list
       }
     }
   }

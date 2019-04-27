@@ -9,6 +9,16 @@
       <div slot="header">
         <h3>新建广告组</h3>
       </div>
+
+      <div class="box_row colBottom" style="margin-bottom: 16px">
+        <div style="margin-right: 16px">
+          <h4>滚动文字:</h4>
+        </div>
+        <div class="box_row_100">
+          <Input v-model="GDText" size="small" placeholder="滚动文字"/>
+        </div>
+      </div>
+
       <div class="box_row" style="height: 300px">
         <div style="border-right: solid 2px #ededed">
           <div>
@@ -17,7 +27,8 @@
           <load-file @handleSuccess="(url)=>{formData.adUrl = url}">
             <div style="height: 140px;width: 140px;margin: 60px 0 80px;
             text-align: center;line-height: 140px;cursor: pointer;">
-              <Icon type="md-cloud-upload" size="80"/>
+              <img v-if="formData.adUrl" :src="formData.adUrl" style="width: 100%" alt="">
+              <Icon v-else type="md-cloud-upload" size="80"/>
             </div>
           </load-file>
         </div>
@@ -90,6 +101,7 @@
       return {
         demoImg,
         modalShow: true,
+        GDText:"",
         adList:[
           {
             adUrl:demoImg,

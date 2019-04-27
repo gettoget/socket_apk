@@ -1,8 +1,10 @@
 <template>
-  <div class="CardItemSty" style="margin-bottom: 16px">
+  <div class="CardItemSty">
     <Card>
-      <div slot="title">
-        <img :src="demoImg" alt="">
+      <!--<div slot="title" style="">-->
+      <!--</div>-->
+      <div>
+        <img :src="demoImg" alt="" style="width: 100%">
       </div>
       <div class="box_row">
         <div class="box_row_100">
@@ -12,6 +14,12 @@
           广告数量
         </div>
       </div>
+
+      <div>
+        滚动文字
+      </div>
+
+
       <div class="">
         <div>
           广告统一发布

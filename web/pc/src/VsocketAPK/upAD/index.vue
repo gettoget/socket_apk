@@ -12,9 +12,11 @@
       </div>
     </div>
     <div class="box_col_autoY">
-      <Row :gutter="16">
+      <Row>
         <Col span="6" v-for="(it) in 5">
-          <ad-card></ad-card>
+          <div style="padding: 16px">
+            <ad-card></ad-card>
+          </div>
         </Col>
       </Row>
     </div>
