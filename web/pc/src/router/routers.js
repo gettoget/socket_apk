@@ -27,29 +27,30 @@ export default [
     },
     component: () => import('@/view/login/login.vue')
   },
-  {
-    path: '/',
-    name: '_home',
-    redirect: '/home',
-    component: Main,
-    meta: {
-      hideInMenu: true,
-      notCache: true
-    },
-    children: [
-      {
-        path: '/home',
-        name: 'home',
-        meta: {
-          hideInMenu: true,
-          title: '首页',
-          notCache: true,
-          icon: 'md-home'
-        },
-        component: () => import('@/view/single-page/home')
-      }
-    ]
-  },
+  // {
+  //   path: '/',
+  //   name: '_home',
+  //   redirect: '/home',
+  //   component: Main,
+  //   meta: {
+  //     hideInMenu: true,
+  //     notCache: true
+  //   },
+  //   children: [
+  //     {
+  //       path: '/home',
+  //       name: 'home',
+  //       meta: {
+  //         hideInBread:true,
+  //         hideInMenu: true,
+  //         notCache: false,
+  //         title: '首页',
+  //         icon: 'md-home'
+  //       },
+  //       component: () => import('@/view/single-page/home')
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/manage-ad',
   //   name: 'manageAd',
@@ -70,16 +71,16 @@ export default [
   //   ]
   // },
   {
-    path: '/socketAPK',
+    path: '/',
     name: 'socketAPK',
     component: Main,
     meta: {
-          title: '广告管理',
-          icon: 'md-home'
-        },
+      title: '广告管理',
+      icon: 'md-home'
+    },
     children: [
       {
-        path: '/newad',
+        path: '/',
         name: 'newAd',
         meta: {
           title: '广告位管理',
@@ -115,7 +116,7 @@ export default [
     meta: {
       icon: 'logo-buffer',
       title: 'iviewDemoComp',
-      hideInMenu:true
+      hideInMenu: true
     },
     children: [
       {

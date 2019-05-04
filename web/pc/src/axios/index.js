@@ -11,7 +11,7 @@ let httpInstance = axios.create({
   baseURL: url,
   timeout: 30000,
   headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-  withCredentials: true
+  withCredentials: false
 });
 httpInstance.url = url;
 // 添加请求拦截器 数据请求之前
@@ -30,12 +30,6 @@ httpInstance.interceptors.request.use((config) => {
 
     }
   }
-  // 在发送请求之前做些什么
-  // if (Cookies.get('accessToken')) {
-  //   let accessToken = JSON.parse(Cookies.get('accessToken'));
-  //   config.headers.token = accessToken.token;
-  //   config.headers.userid = accessToken.userId;
-  // }
   return config;
 }, function (error) {
     console.log(error);
@@ -46,22 +40,17 @@ httpInstance.interceptors.request.use((config) => {
 
 // 添加响应拦截器 数据响应之后
 httpInstance.interceptors.response.use((response) => {
-  console.log('数据拦截');
-  console.log(response);
+  // console.log('数据拦截');
+  // console.log(response);
   var v = this;
   // 对响应数据做点什么
   if (response.status === 404) {
     router.push({name: 'error-404'});
   }
   if (response.status === 200) {
-    if(response.data.code === 999){
-      router.push({name: 'login'})
-      iView.Message.info(response.data.message+',请重新登录');
-      return
-    }
     return response.data;
   } else {
-    router.push({name: 'error-500'});
+    router.push({name: 'login'});
   }
 }, function (error) {
   // iView.Spin.hide()

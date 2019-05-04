@@ -1,33 +1,32 @@
 <template>
   <div class="CardItemSty">
     <Card>
-      <!--<div slot="title" style="">-->
-      <!--</div>-->
-      <div>
+      <Button class="bj" @click="adBj(itMess)" type="warning" size="small">编辑</Button>
+      <div v-if="itMess.media_list.length==0" style="text-align: center">
+        <Icon type="ios-image-outline" size="141"/>
+      </div>
+      <div v-else>
         <img :src="demoImg" alt="" style="width: 100%">
       </div>
       <div class="box_row">
         <div class="box_row_100">
-          广告组名称
+          名称 :
+          <h3>{{itMess.group_name}}</h3>
         </div>
         <div class="box_row_100">
-          广告数量
+          数量 :
+          <h3>{{itMess.media_list.length}}</h3>
         </div>
       </div>
-
-      <div>
-        滚动文字
-      </div>
-
 
       <div class="">
         <div>
-          广告统一发布
+          统一发布
         </div>
         <div class="box_row rowAuto">
-          <Button type="info">一号屏发布</Button>
-          <Button type="success">二号屏发布</Button>
-          <Button type="warning">三号屏发布</Button>
+          <Button type="info">一号屏</Button>
+          <Button type="success">二号屏</Button>
+          <Button type="warning">三号屏</Button>
         </div>
       </div>
   </Card>
@@ -39,9 +38,20 @@
 
   export default {
     name: "AdCard",
+    props:{
+      itMess:{
+        type:Object,
+        default:{}
+      }
+    },
     data() {
       return {
         demoImg
+      }
+    },
+    methods:{
+      adBj(it){
+        this.$emit('adBj',it)
       }
     }
   }
@@ -49,14 +59,13 @@
 
 <style lang="less">
   .CardItemSty {
-    .ivu-card-head {
-      padding: 0;
-      img {
-        width: 100%;
+    .ivu-card-body {
+      position: relative;
+      .bj{
+        position: absolute;
+        top: 0;
+        right: 0;
       }
     }
-    /*.ivu-card-body {*/
-    /*padding: 0;*/
-    /*}*/
   }
 </style>

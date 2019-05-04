@@ -18,6 +18,8 @@
 <script>
 import LoginForm from '_c/login-form'
 import { mapActions } from 'vuex'
+import axios from 'axios';
+
 export default {
   components: {
     LoginForm
@@ -35,7 +37,11 @@ export default {
     ]),
     handleSubmit (formDate) {
       this.$http.post('/admin_login',formDate).then(res=>{
-        console.log(res);
+        if(res.success){
+          this.$router.push({
+            name:'newAd'
+          })
+        }
       }).catch(err=>{})
     },
     getRandom(val) {//取随机数

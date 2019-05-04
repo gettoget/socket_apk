@@ -9,10 +9,10 @@
         <div class="box_row rowRight colCenter">
           <Input class="itMargin" value="" placeholder="店铺名称" style="width: 220px"/>
           <Button class="itMargin" type="primary">查询</Button>
-          <Button class="itMargin" type="primary">新建广告位</Button>
         </div>
       </div>
     </div>
+
     <div id="tabBox" class="pagerTab box_col_100">
       <Table v-if="tabHeader" :height="tabHeader"
              stripe :columns="tabTit" :data="tabData"
@@ -20,12 +20,19 @@
       ></Table>
     </div>
 
-    <div class="eventButSty">
-      <Button type="primary" class="itMargin" @click="selectFP">分屏模式设置</Button>
-      <Button type="success" class="itMargin">1号屏幕设置</Button>
-      <Button type="success" class="itMargin">2号屏幕设置</Button>
-      <Button type="success" class="itMargin">3号屏幕设置</Button>
-    </div>
+    <Row :gutter="32" class-name="RowPager">
+      <Col span="12">
+        <div class="eventButSty">
+          <Button type="primary" class="itMargin" @click="selectFP">分屏模式设置</Button>
+          <Button type="success" class="itMargin">1号屏幕设置</Button>
+          <Button type="success" class="itMargin">2号屏幕设置</Button>
+          <Button type="success" class="itMargin">3号屏幕设置</Button>
+        </div>
+      </Col>
+      <Col span="12" align="center">
+        <Page :total="PageTotal" :page-size="params.limit"  @on-change="pagerCh"/>
+      </Col>
+    </Row>
 
     <component :is="compName" :modelType="modelType"></component>
   </div>
@@ -33,6 +40,8 @@
 
 <script>
   import eventModel from './comp/eventModel'
+  import axios from 'axios';
+
   export default {
     name: "index",
     components:{eventModel},
@@ -47,82 +56,128 @@
           },
           {
             title: "设备ID",
-            key: "name"
+            key:'device_key',
+            minWidth:120
           },
           {
             title: "在线状态",
-            key: ""
+            key: "",
+            minWidth:120
           },
           {
             title: "店铺名称",
-            key: "address"
+            key: "shop_name",
+            minWidth:120
           },
           {
             title: "负责人",
-            key: "address"
+            key: "manager_name",
+            minWidth:120
           },
           {
             title: "联系电话",
-            key: "phone"
+            key: "phone",
+            minWidth:120
           },
           {
             title: "性别",
-            key: "gender"
+            key: "gender",
+            minWidth:120,
+            render:(h,p)=>{
+              let a = '先生'
+              if(p.row.gender == "M"){
+                a = '女士'
+              }
+              return h('div',a)
+            }
+
           },
           {
             title: "(1号屏幕)",
             key: "",
+            minWidth:120
+          },
+          {
+            title: "(2号屏幕)",
+            key: "",
+            minWidth:120
+          },
+          {
+            title: "(3号屏幕)",
+            key: "",
+            minWidth:120
+          },
+          {
+            title: "分屏模式",
+            key: "",
+            minWidth:120
+          },
+          {
+            title: "操作",
+            fixed:"right",
+            align:'center',
+            minWidth:140,
             render: (h, p) => {
               return h('div', [
                 h('Button', {
+                  style:{
+                    marginRight:'16px'
+                  },
                   props: {
                     type: 'info',
                     size: 'small'
                   },
                   on: {
                     click: () => {
-                      this.remove(params.index)
+                      // this.remove(p)
                     }
                   }
-                }, '广告维护')
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(p)
+                    }
+                  }
+                }, '删除')
               ]);
             }
-          },
-          {
-            title: "(2号屏幕)"
-          },
-          {
-            title: "(3号屏幕)"
-          },
-          {
-            title: "分屏模式"
           }
         ],
         tabData: [
-          {
-            // "id": 2,//广告位id
-            // "admin_id": 1,//创建用户的id
-            // "device_key": "key2",//电视id
-            // "split_type": 0,
-            // "shop_name": "上海杨浦",
-            // "manager_name": "admin2",
-            // "phone": "12333334",
-            // "gender": "M",
-            // "online_status": 1,
-            // "online_status_change_time": 0,
-            // "online_check_time": 0,
-            // "deleted": 0,
-            // "createtime": 0,
-            // "updatetime": 0
-          }
+          // {
+          //   "id": 2,//广告位id
+          //   "admin_id": 1,//创建用户的id
+          //   "device_key": "key2",//电视id
+          //   "split_type": 0,
+          //   "shop_name": "上海杨浦",
+          //   "manager_name": "admin2",
+          //   "phone": "12333334",
+          //   "gender": "M",
+          //   "online_status": 1,
+          //   "online_status_change_time": 0,
+          //   "online_check_time": 0,
+          //   "deleted": 0,
+          //   "createtime": 0,
+          //   "updatetime": 0
+          // }
         ],
+        PageTotal:0,
+        params:{
+          limit: 10 ,
+          offset:0
+        },
         tabSelectAllList:[],
         modelType:"scrn",
         compName:""
       }
     },
     created() {
-
+      this.getDatalist()
     },
     mounted() {
       this.$nextTick(() => {
@@ -134,6 +189,22 @@
       })
     },
     methods: {
+      pagerCh(val){
+        console.log(val);
+        this.params.offset = (val-1)*this.params.limit
+        this.getDatalist()
+      },
+      getDatalist(){
+        this.$http.get('http://180g1187v9.51mypc.cn:8090/ajaxapi/admin/device_list',{
+          params: this.params
+        }).then(res=>{
+          if(res.success){
+            console.log(res);
+            this.tabData = res.data.devices
+            this.PageTotal = res.data.total
+          }
+        }).catch(err=>{})
+      },
       tabList(callback){
         let Bol = false
         if(this.tabSelectAllList.length>0){
@@ -165,6 +236,23 @@
       tabSelect(list, row) {
         console.log(list);
         this.tabSelectAllList = list
+      },
+      remove(p){
+        var v = this
+        this.swal({
+          title:'确定删除广告位？',
+          type:'warning',
+          showCancelButton: true,
+          confirmButtonText: '删除！',
+          cancelButtonText: '取消'
+        }).then(()=>{
+          v.$http.post('/admin/delete_device',{device_id:p.row.id}).then(res=>{
+            if(res.success){
+              v.params.offset = 0
+              v.getDatalist()
+            }
+          }).catch(err=>{})
+        })
       }
     }
   }
