@@ -11,7 +11,7 @@ let httpInstance = axios.create({
   baseURL: url,
   timeout: 30000,
   headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-  withCredentials: false
+  withCredentials: true
 });
 httpInstance.url = url;
 // 添加请求拦截器 数据请求之前

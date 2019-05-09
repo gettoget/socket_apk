@@ -8,8 +8,6 @@
       <div class="box_row_100">
         <div class="box_row rowRight colCenter">
           <Button class="itMargin" type="primary" @click="adUp">新建广告组</Button>
-
-          <!--<Button class="itMargin" type="primary" @click="adUp">新建广告</Button>-->
         </div>
       </div>
     </div>
@@ -27,6 +25,9 @@
           <!--</div>-->
         <!--</Col>-->
       <!--</Row>-->
+    </div>
+    <div style="padding: 12px 0">
+      <Page :total="PageTotal" :page-size="params.limit"  @on-change="pagerCh"/>
     </div>
     <component :is="compName" :groupItem="groupItem"></component>
   </div>
@@ -47,7 +48,7 @@
         dataList:[],
         PageTotal:0,
         params:{
-          limit: 10 ,
+          limit: 14 ,
           offset:0
         },
       }
@@ -60,12 +61,18 @@
     mounted() {
     },
     methods: {
+      pagerCh(val){
+        console.log(val);
+        this.params.offset = (val-1)*this.params.limit
+        this.getDatalist()
+      },
       getDataList(){
         this.$http.get('/admin/media_group_list',{
           params: this.params
         }).then(res=>{
           if(res.success){
             this.dataList = res.data
+            this.PageTotal = res.data.total
           }
         }).catch(err=>{})
       },
