@@ -1,6 +1,6 @@
 <template>
       <div>
-        广告管理
+        广告到期
       </div>
 </template>
 

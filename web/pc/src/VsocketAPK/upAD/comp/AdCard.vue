@@ -1,12 +1,17 @@
 <template>
   <div class="CardItemSty">
     <Card>
-      <Button class="bj" @click="adBj(itMess)" type="warning" size="small">编辑</Button>
-      <div v-if="itMess.media_list.length==0" style="text-align: center">
+      <div class="box_row butEvent">
+        <Button class="bj" @click="adBj(itMess)" type="warning" size="small">广告编辑</Button>
+        <Button class="bjMusic" @click="adMusic(itMess)" type="info" size="small">名称/音乐</Button>
+      </div>
+
+      <div v-if="itMess.media_list.length==0" style="text-align: center;height: 140px">
         <Icon type="ios-image-outline" size="141"/>
       </div>
-      <div v-else>
-        <img :src="demoImg" alt="" style="width: 100%">
+      <div v-else style="text-align: center;height: 140px">
+        <img v-if="itMess.media_list[0].media_type == '0'" :src="itMess.media_list[0].link" alt="" style="height: 100%">
+        <video v-if="itMess.media_list[0].media_type == '1'" :src="itMess.media_list[0].link"  style="height: 100%"></video>
       </div>
       <div class="box_row">
         <div class="box_row_100">
@@ -34,8 +39,6 @@
 </template>
 
 <script>
-  import demoImg from '@/assets/images/login-bg.jpg'
-
   export default {
     name: "AdCard",
     props:{
@@ -46,12 +49,14 @@
     },
     data() {
       return {
-        demoImg
       }
     },
     methods:{
       adBj(it){
         this.$emit('adBj',it)
+      },
+      adMusic(it){
+        this.$emit('adMusic',it)
       }
     }
   }
@@ -61,10 +66,24 @@
   .CardItemSty {
     .ivu-card-body {
       position: relative;
-      .bj{
+      .butEvent{
+        width: 100%;
         position: absolute;
         top: 0;
         right: 0;
+        z-index: 100;
+        /*.bj{*/
+          /*position: absolute;*/
+          /*top: 0;*/
+          /*right: 0;*/
+          /*z-index: 100;*/
+        /*}*/
+        /*.bjMusic{*/
+          /*position: absolute;*/
+          /*top: 0;*/
+          /*right: 45px;*/
+          /*z-index: 100;*/
+        /*}*/
       }
     }
   }

@@ -1,17 +1,20 @@
 <template>
   <div class="user-avatar-dropdown">
-    <Dropdown @on-click="handleClick">
-      <Badge :dot="!!messageUnreadCount">
-        <Avatar :src="userAvatar"/>
-      </Badge>
-      <Icon :size="18" type="md-arrow-dropdown"></Icon>
-      <DropdownMenu slot="list">
-        <DropdownItem name="message">
-          消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
-        </DropdownItem>
-        <DropdownItem name="logout">退出登录</DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+    <!--<Dropdown @on-click="handleClick">-->
+      <!--<Badge :dot="!!messageUnreadCount">-->
+        <!--<Avatar :src="userAvatar"/>-->
+      <!--</Badge>-->
+      <!--<Icon :size="18" type="md-arrow-dropdown"></Icon>-->
+      <!--<DropdownMenu slot="list">-->
+        <!--<DropdownItem name="message">-->
+          <!--消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>-->
+        <!--</DropdownItem>-->
+        <!--<DropdownItem name="logout">退出登录</DropdownItem>-->
+      <!--</DropdownMenu>-->
+    <!--</Dropdown>-->
+    <Tooltip content="退出登录" placement="left">
+      <Icon type="md-log-out" size="30" color="#a7a7a7" @click.native="handleClick('logout')"/>
+    </Tooltip>
   </div>
 </template>
 

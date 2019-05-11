@@ -7,24 +7,15 @@
       :mask-closable="false"
       :scrollable="false">
       <div slot="header">
-        <h3>新建广告组 {{$parent.groupItem.id}}</h3>
+        <h3>广告组编辑 {{$parent.groupItem.id}}</h3>
       </div>
-
-      <!--<div class="box_row colBottom" style="margin-bottom: 16px">-->
-        <!--<div style="margin-right: 16px">-->
-          <!--<h4>滚动文字:</h4>-->
-        <!--</div>-->
-        <!--<div class="box_row_100">-->
-          <!--<Input v-model="GDText" size="small" placeholder="滚动文字"/>-->
-        <!--</div>-->
-      <!--</div>-->
 
       <div class="box_row" style="height: 300px">
         <div style="border-right: solid 2px #ededed">
           <div>
             <h4>媒体文件上传:</h4>
           </div>
-          <load-file @handleSuccess="(url)=>{formData.file_name = url}">
+          <load-file :FILE_SIZE="1024" @handleSuccess="(url)=>{formData.file_name = url}">
             <div style="height: 140px;width: 140px;margin: 60px 0 80px;
             text-align: center;line-height: 140px;cursor: pointer;">
               <img v-if="formData.file_name" :src="formData.file_name" style="width: 100%" alt="">
@@ -34,17 +25,30 @@
         </div>
 
         <div class="box_row_1auto">
-          <div class="box_row_z" :style="{width:190*adList.length+'px'}">
-            <div style="width: 160px;height: 160px;margin: 0 15px" v-for="(it,index) in adList" :key="index">
-              <!--<div class="box_row">-->
-                <!--<div>-->
-                  <!--音频文件：-->
-                <!--</div>-->
-                <!--<div class="box_row_100 textshowLine">-->
-                  <!--{{it.raUrl}}-->
-                <!--</div>-->
-              <!--</div>-->
-              <img :src="it.file_name" alt="" style="height: 100%;width: 100%">
+          <div class="box_row_z" :style="{width:190*(adList.length+media_list.length)+'px'}">
+
+            <div style="width: 160px;height: 160px;margin: 0 15px;position: relative" v-for="(it,index) in adList" :key="index">
+              <div style="position: absolute;top: 0;right: 0;z-index: 100;cursor: pointer">
+                <Icon type="md-close-circle" size="28" color="#ed4014"
+                      @click.native="removeItem(it,index)"/>
+              </div>
+              <img v-if="it.media_type == '0'" :src="it.file_name" alt="" style="height: 100%;width: 100%">
+              <video v-if="it.media_type == '1'" :src="it.file_name"  style="height: 100%;width: 100%"></video>
+              <div>
+                播放时长：{{it.play_time}}(秒)
+              </div>
+              <div>
+                广告有效期：{{it.expire_days}}(天)
+              </div>
+            </div>
+
+            <div v-if="media_list.length>0" style="width: 160px;height: 160px;margin: 0 15px;position: relative" v-for="(it,index) in media_list" :key="index">
+              <div style="position: absolute;top: 0;right: 0;z-index: 100;cursor: pointer">
+                <Icon type="md-close-circle" size="28" color="#ed4014"
+                      @click.native="removeItem(it,index)"/>
+              </div>
+              <img v-if="it.media_type == '0'" :src="it.link" alt="" style="height: 100%;width: 100%">
+              <video v-if="it.media_type == '1'" :src="it.link"  style="height: 100%;width: 100%"></video>
               <div>
                 播放时长：{{it.play_time}}(秒)
               </div>
@@ -111,36 +115,19 @@
         demoImg,
         modalShow: true,
         GDText:"",
-
-      // {"link":"http://link1",  0  tu  1shi 2 yinpin
-        // "media_type":1,
-        // "play_time":11,   0不在线
-        // "expire_days":30}
-
-      // {"file_name":"file_name1",
+      // {"file_name":"file_name1", 0  tu  1shi 2 yinpin
         // "media_type":1,
         // "play_time":11,
         // "expire_days":30}
         adList:[
           // {
-          //   file_name:demoImg,
-          //   media_type:'0',
-          //   play_time:3,
-          //   expire_days:180,
-          // },
-          // {
-          //   file_name:demoImg,
-          //   media_type:'0',
-          //   play_time:3,
-          //   expire_days:180,
-          // },
-          // {
-          //   file_name:demoImg,
+          //   file_name:'https://i.loli.net/2017/08/21/599a521472424.jpg',
           //   media_type:'0',
           //   play_time:3,
           //   expire_days:180,
           // }
         ],
+        media_list:[],
         formData: {
           file_name:'',
           media_type:'0',//....
@@ -152,14 +139,27 @@
     watch: {
       "formData.input2": function (n, o) {
         console.log(n);
-        console.log(o);
       }
     },
     created(){
+      console.log('xing');
+      console.log(this.$parent.groupItem);
+      this.media_list = this.$parent.groupItem.media_list
 
+      // this.$parent.groupItem.media_list.forEach((it,index)=>{
+      //   this.adList.push({
+      //     file_name:it.link,
+      //     media_type:it.media_type,//....
+      //     play_time: it.play_time,
+      //     expire_days: it.expire_days
+      //   })
+      // })
     },
     methods:{
       upMess(){
+        if(this.formData.file_name.split('.')[this.formData.file_name.split('.').length-1]=='mp4'){
+          this.formData.media_type = '1'
+        }
         this.adList.splice(0,0,this.formData)
         this.formData = {
           file_name:'',
@@ -168,12 +168,29 @@
           expire_days: "15"
         }
       },
+      removeItem(it,index){
+        if(it.id){
+          this.$http.post('/admin/delete_media',{media_id:it.id}).then(res=>{
+            if(res.success){
+              this.media_list.splice(index,1)
+            }
+          }).catch(err=>{
+
+          })
+        }else {
+          this.adList.splice(index,1)
+        }
+      },
       save(){
         let parms = {}
         parms.group_id = this.$parent.groupItem.id
+        console.log(this.adList.length);
         parms.media_lists = JSON.stringify(this.adList)
         this.$http.post("/admin/group_media",parms).then(res=>{
-
+          if(res.success){
+            this.cancel()
+            this.$parent.getDataList()
+          }
         }).catch(err=>{})
       },
       cancel(){

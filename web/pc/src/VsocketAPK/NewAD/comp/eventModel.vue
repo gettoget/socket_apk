@@ -3,7 +3,7 @@
     <Modal
       v-model="modalVal"
       :mask-closable="false"
-      title="Common Modal dialog box title"
+      title="请选择分屏模式"
       @on-visible-change="visible"
     >
       <div class="scrnModel box_row rowAuto">

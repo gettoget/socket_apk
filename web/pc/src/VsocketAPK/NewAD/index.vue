@@ -3,8 +3,12 @@
 </style>
 <template>
   <div class="box_col newAdpagerSty">
-    <div class="pagerTit box_row">
+    <div class="pagerTit box_row  colCenter">
       <pager-tit title="广告位管理"></pager-tit>
+      <div class="box_row_100">
+        <Button type="success" class="itMargin">分屏统一设置</Button>
+        <Button type="warning" class="itMargin">招商文字管理</Button>
+      </div>
       <div class="box_row_100">
         <div class="box_row rowRight colCenter">
           <Input class="itMargin" value="" placeholder="店铺名称" style="width: 220px"/>
@@ -20,19 +24,18 @@
       ></Table>
     </div>
 
-    <Row :gutter="32" class-name="RowPager">
-      <Col span="12">
-        <div class="eventButSty">
-          <Button type="primary" class="itMargin" @click="selectFP">分屏模式设置</Button>
-          <Button type="success" class="itMargin">1号屏幕设置</Button>
-          <Button type="success" class="itMargin">2号屏幕设置</Button>
-          <Button type="success" class="itMargin">3号屏幕设置</Button>
+    <div class="RowPager">
+        <div class="eventButSty ">
+          <!--<Button type="primary" class="itMargin" @click="selectFP">分屏批量设置</Button>-->
+
+          <Button type="success" class="itMargin" @click="bindAD(1)">1号屏幕设置</Button>
+          <Button type="success" class="itMargin" @click="bindAD(2)">2号屏幕设置</Button>
+          <Button type="success" class="itMargin" @click="bindAD(3)">3号屏幕设置</Button>
         </div>
-      </Col>
-      <Col span="12" align="center">
+    </div>
+    <div class="RowPager">
         <Page :total="PageTotal" :page-size="params.limit"  @on-change="pagerCh"/>
-      </Col>
-    </Row>
+    </div>
 
     <component :is="compName" :modelType="modelType"></component>
   </div>
@@ -40,11 +43,13 @@
 
 <script>
   import eventModel from './comp/eventModel'
-  import axios from 'axios';
+  import upData from './comp/UpData'
+
+  import adGroupList from './comp/adGroupList'
 
   export default {
     name: "index",
-    components:{eventModel},
+    components:{eventModel,upData,adGroupList},
     data() {
       return {
         tabHeader: null,
@@ -129,7 +134,7 @@
                   },
                   on: {
                     click: () => {
-                      // this.remove(p)
+                      this.upBoxModal(p)
                     }
                   }
                 }, '编辑'),
@@ -173,7 +178,10 @@
         },
         tabSelectAllList:[],
         modelType:"scrn",
-        compName:""
+        compName:"",
+        itemMess:'',
+        ids:'',
+        position_type:''
       }
     },
     created() {
@@ -207,10 +215,14 @@
       },
       tabList(callback){
         let Bol = false
+        let ids = []
         if(this.tabSelectAllList.length>0){
           Bol = true
+          this.tabSelectAllList.forEach((it,index)=>{
+            ids.push(it.id)
+          })
         }
-        callback && callback(Bol)
+        callback && callback(Bol,ids)
 
       },
       selectFP(){
@@ -229,6 +241,24 @@
           }
         })
       },
+      bindAD(num){
+        var v = this
+        this.tabList((val,ids)=>{
+          if(val)
+          {
+            console.log('123',ids);
+            this.ids = ids
+            this.position_type = num
+            this.compName = 'adGroupList'
+          }
+          else{
+            v.swal({
+              title:"请选择要编辑的广告位",
+              type:"warning"
+            })
+          }
+        })
+      },
       tabSelectAll(list){
         console.log(list);
         this.tabSelectAllList = list
@@ -236,6 +266,10 @@
       tabSelect(list, row) {
         console.log(list);
         this.tabSelectAllList = list
+      },
+      upBoxModal(p){
+        this.itemMess = p.row
+        this.compName = 'upData'
       },
       remove(p){
         var v = this

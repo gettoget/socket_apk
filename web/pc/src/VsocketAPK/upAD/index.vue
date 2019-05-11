@@ -14,17 +14,9 @@
     <div class="box_col_autoY">
       <div class="box_row_list">
         <div style="padding: 16px;width: 310px"  v-for="(it,index) in dataList" :key="index">
-          <ad-card :itMess="it" @adBj="adBj"></ad-card>
+          <ad-card :itMess="it" @adBj="adBj" @adMusic="adMusic"></ad-card>
         </div>
       </div>
-
-      <!--<Row>-->
-        <!--<Col span="6" v-for="(it,index) in dataList" :key="index">-->
-          <!--<div style="padding: 16px">-->
-            <!--<ad-card></ad-card>-->
-          <!--</div>-->
-        <!--</Col>-->
-      <!--</Row>-->
     </div>
     <div style="padding: 12px 0">
       <Page :total="PageTotal" :page-size="params.limit"  @on-change="pagerCh"/>
@@ -34,21 +26,22 @@
 </template>
 
 <script>
-  import adCard from './comp/AdCard'
-  import adGroup from './comp/addAdGroup'
+  import adCard from './comp/AdCard'//广告组 卡片
+  import adGroup from './comp/addAdGroup' //添加 广告组
 
   import adGroupItem from './comp/addAdGroupItem'
+  import bgMusic from './comp/bgMusic'
   export default {
     name: "index",
-    components: {adCard,adGroup,adGroupItem},
+    components: {adCard,adGroup,adGroupItem,bgMusic},
     data() {
       return {//adGroup
         compName:"",
-        groupItem:"",
+        groupItem:"",//广告组的信息
         dataList:[],
         PageTotal:0,
         params:{
-          limit: 14 ,
+          limit: 2 ,
           offset:0
         },
       }
@@ -64,14 +57,14 @@
       pagerCh(val){
         console.log(val);
         this.params.offset = (val-1)*this.params.limit
-        this.getDatalist()
+        this.getDataList()
       },
       getDataList(){
         this.$http.get('/admin/media_group_list',{
           params: this.params
         }).then(res=>{
           if(res.success){
-            this.dataList = res.data
+            this.dataList = res.data.media_groups
             this.PageTotal = res.data.total
           }
         }).catch(err=>{})
@@ -82,6 +75,10 @@
       adBj(val){
         this.groupItem = val
         this.compName = 'adGroupItem'
+      },
+      adMusic(val){
+        this.groupItem = val
+        this.compName = 'bgMusic'
       }
     }
   }
