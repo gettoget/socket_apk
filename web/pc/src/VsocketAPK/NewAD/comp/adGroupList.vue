@@ -66,7 +66,7 @@
       save() {
         if (this.group_id != '') {
           this.$http.post('/admin/bind_device_group',{
-            device_ids:this.$parent.ids,
+            device_ids:JSON.stringify(this.$parent.ids),
             position_type:this.$parent.position_type,
             group_id:this.group_id
           }).then(res => {

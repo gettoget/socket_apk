@@ -41,7 +41,7 @@
         dataList:[],
         PageTotal:0,
         params:{
-          limit: 2 ,
+          limit: 6,
           offset:0
         },
       }

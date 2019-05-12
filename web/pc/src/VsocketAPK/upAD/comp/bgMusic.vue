@@ -65,7 +65,7 @@
     },
     methods: {
       handleSuccess(url){
-        this.params.audio_name = url
+        this.params.audio_name = url.file_name
       },
       upSave() {
 

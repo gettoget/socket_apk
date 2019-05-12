@@ -4,6 +4,7 @@
       <div class="box_row butEvent">
         <Button class="bj" @click="adBj(itMess)" type="warning" size="small">广告编辑</Button>
         <Button class="bjMusic" @click="adMusic(itMess)" type="info" size="small">名称/音乐</Button>
+        <Button type="error" shape="circle" icon="md-close" size="small" style="position: absolute;top: 0;right: 0" @click="remove"></Button>
       </div>
 
       <div v-if="itMess.media_list.length==0" style="text-align: center;height: 140px">
@@ -29,9 +30,9 @@
           统一发布
         </div>
         <div class="box_row rowAuto">
-          <Button type="info">一号屏</Button>
-          <Button type="success">二号屏</Button>
-          <Button type="warning">三号屏</Button>
+          <Button type="info" @click="fb(1)">一号屏</Button>
+          <Button type="success" @click="fb(2)">二号屏</Button>
+          <Button type="warning" @click="fb(3)">三号屏</Button>
         </div>
       </div>
   </Card>
@@ -52,11 +53,37 @@
       }
     },
     methods:{
+      remove(){
+        var v = this
+        this.swal({
+          title:"123",
+          type:"warning",
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '删除',
+          cancelButtonText:'取消'
+        }).then(function(val){
+          if(val.value){
+            v.$http.post('/admin/delete_group',{group_id:v.itMess.id}).then(res=>{
+              if(res.success){
+                v.$parent.getDataList()
+              }
+            }).catch(err=>{})
+          }
+        })
+      },
       adBj(it){
         this.$emit('adBj',it)
       },
       adMusic(it){
         this.$emit('adMusic',it)
+      },
+      fb(postion){
+        this.$http.post('/admin/bind_all_device_group',{group_id:this.itMess.id,position_type:postion}).then(res=>{
+          if(res.success){
+            this.$Message.success('广告'+postion+'号屏幕，发布成功')
+          }
+        }).catch(err=>{})
       }
     }
   }
@@ -72,18 +99,6 @@
         top: 0;
         right: 0;
         z-index: 100;
-        /*.bj{*/
-          /*position: absolute;*/
-          /*top: 0;*/
-          /*right: 0;*/
-          /*z-index: 100;*/
-        /*}*/
-        /*.bjMusic{*/
-          /*position: absolute;*/
-          /*top: 0;*/
-          /*right: 45px;*/
-          /*z-index: 100;*/
-        /*}*/
       }
     }
   }

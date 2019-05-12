@@ -53,6 +53,7 @@ httpInstance.interceptors.response.use((response) => {
     router.push({name: 'login'});
   }
 }, function (error) {
+  router.push({name: 'login'});
   // iView.Spin.hide()
   // 对响应错误做点什么
   // if (!Cookies.get('result')) {

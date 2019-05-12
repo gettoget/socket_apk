@@ -7,7 +7,7 @@
       :mask-closable="false"
       :scrollable="false">
       <div slot="header">
-        <h3>广告组编辑 {{$parent.groupItem.id}}</h3>
+        <h3>广告组编辑</h3>
       </div>
 
       <div class="box_row" style="height: 300px">
@@ -15,10 +15,14 @@
           <div>
             <h4>媒体文件上传:</h4>
           </div>
-          <load-file :FILE_SIZE="1024" @handleSuccess="(url)=>{formData.file_name = url}">
+          <load-file :FILE_SIZE="1024" @handleSuccess="handleSuccess">
             <div style="height: 140px;width: 140px;margin: 60px 0 80px;
             text-align: center;line-height: 140px;cursor: pointer;">
-              <img v-if="formData.file_name" :src="formData.file_name" style="width: 100%" alt="">
+              <img v-if="formData.media_type == '0' && formData.file_name"
+                   :src="httpLink+formData.file_name" style="width: 100%" alt="">
+              <video v-else-if="formData.media_type == '1' && formData.file_name"
+                     :src="httpLink+formData.file_name"  style="width: 100%"></video>
+
               <Icon v-else type="md-cloud-upload" size="80"/>
             </div>
           </load-file>
@@ -32,8 +36,8 @@
                 <Icon type="md-close-circle" size="28" color="#ed4014"
                       @click.native="removeItem(it,index)"/>
               </div>
-              <img v-if="it.media_type == '0'" :src="it.file_name" alt="" style="height: 100%;width: 100%">
-              <video v-if="it.media_type == '1'" :src="it.file_name"  style="height: 100%;width: 100%"></video>
+              <img v-if="it.media_type == '0'" :src="httpLink+it.file_name" alt="" style="height: 100%;width: 100%">
+              <video v-if="it.media_type == '1'" :src="httpLink+it.file_name"  style="height: 100%;width: 100%"></video>
               <div>
                 播放时长：{{it.play_time}}(秒)
               </div>
@@ -73,6 +77,7 @@
           </FormItem>
           <FormItem label="广告有效期/(天)">
             <RadioGroup v-model="formData.expire_days" type="button">
+              <Radio label="4">4天</Radio>
               <Radio label="15">15天</Radio>
               <Radio label="30">30天</Radio>
               <Radio label="90">90天</Radio>
@@ -119,6 +124,7 @@
         // "media_type":1,
         // "play_time":11,
         // "expire_days":30}
+        httpLink:'',
         adList:[
           // {
           //   file_name:'https://i.loli.net/2017/08/21/599a521472424.jpg',
@@ -145,21 +151,17 @@
       console.log('xing');
       console.log(this.$parent.groupItem);
       this.media_list = this.$parent.groupItem.media_list
-
-      // this.$parent.groupItem.media_list.forEach((it,index)=>{
-      //   this.adList.push({
-      //     file_name:it.link,
-      //     media_type:it.media_type,//....
-      //     play_time: it.play_time,
-      //     expire_days: it.expire_days
-      //   })
-      // })
     },
     methods:{
-      upMess(){
+      handleSuccess(file){
+        this.httpLink = file.http_link
+        this.formData.file_name = file.file_name
         if(this.formData.file_name.split('.')[this.formData.file_name.split('.').length-1]=='mp4'){
           this.formData.media_type = '1'
         }
+      },
+      upMess(){
+
         this.adList.splice(0,0,this.formData)
         this.formData = {
           file_name:'',

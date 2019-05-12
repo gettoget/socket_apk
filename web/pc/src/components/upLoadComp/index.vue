@@ -74,11 +74,11 @@
     methods: {
       handleSuccess(res, file) {
         alert("上传成功")
-        this.$emit("handleSuccess",res.data.link)
+        this.$emit("handleSuccess",res.data)
         // this.$emit('handleSuccess', 'http://mt.xxpt123.com:81/img/temp/ce3c0ca016a44795bdce23141f994cce.jpg')
 
-        console.log(res);
-        console.log(file);
+        // console.log(res);
+        // console.log(file);
       },
       handleError(file) {
         alert("上传失败")

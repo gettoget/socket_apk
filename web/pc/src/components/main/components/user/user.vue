@@ -41,6 +41,9 @@ export default {
       this.$router.push({
         name: 'login'
       })
+      this.$http.get('/logout').then(res=>{
+
+      }).catch(err=>{})
       // this.handleLogOut().then(() => {
       // })
     },

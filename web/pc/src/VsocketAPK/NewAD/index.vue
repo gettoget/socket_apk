@@ -5,9 +5,17 @@
   <div class="box_col newAdpagerSty">
     <div class="pagerTit box_row  colCenter">
       <pager-tit title="广告位管理"></pager-tit>
-      <div class="box_row_100">
-        <Button type="success" class="itMargin">分屏统一设置</Button>
-        <Button type="warning" class="itMargin">招商文字管理</Button>
+      <div>
+        <Button type="success" class="itMargin" @click="selectFP">分屏统一设置</Button>
+      </div>
+      <div class="box_row_100" style="position: relative;margin-left: 15px">
+        <Input v-model="device_scroll" :disabled="scrollEvent">
+          <span slot="prepend">招商文字</span>
+        </Input>
+        <div style="position: absolute;top: 0;right: 0;z-index: 100;">
+          <Button type="warning" class="itMargin" v-if="scrollEvent" @click="scrollEvent=!scrollEvent">编辑</Button>
+          <Button type="success" class="itMargin" v-else  @click="saveScroll">保存</Button>
+        </div>
       </div>
       <div class="box_row_100">
         <div class="box_row rowRight colCenter">
@@ -25,16 +33,16 @@
     </div>
 
     <div class="RowPager">
-        <div class="eventButSty ">
-          <!--<Button type="primary" class="itMargin" @click="selectFP">分屏批量设置</Button>-->
+      <div class="eventButSty ">
+        <!--<Button type="primary" class="itMargin" @click="selectFP">分屏批量设置</Button>-->
 
-          <Button type="success" class="itMargin" @click="bindAD(1)">1号屏幕设置</Button>
-          <Button type="success" class="itMargin" @click="bindAD(2)">2号屏幕设置</Button>
-          <Button type="success" class="itMargin" @click="bindAD(3)">3号屏幕设置</Button>
-        </div>
+        <Button type="success" class="itMargin" @click="bindAD(1)">1号屏幕设置</Button>
+        <Button type="success" class="itMargin" @click="bindAD(2)">2号屏幕设置</Button>
+        <Button type="success" class="itMargin" @click="bindAD(3)">3号屏幕设置</Button>
+      </div>
     </div>
     <div class="RowPager">
-        <Page :total="PageTotal" :page-size="params.limit"  @on-change="pagerCh"/>
+      <Page :total="PageTotal" :page-size="params.limit" @on-change="pagerCh"/>
     </div>
 
     <component :is="compName" :modelType="modelType"></component>
@@ -49,10 +57,12 @@
 
   export default {
     name: "index",
-    components:{eventModel,upData,adGroupList},
+    components: {eventModel, upData, adGroupList},
     data() {
       return {
         tabHeader: null,
+        device_scroll:'',
+        scrollEvent:true,
         tabTit: [
           {
             type: "selection",
@@ -61,72 +71,106 @@
           },
           {
             title: "设备ID",
-            key:'device_key',
-            minWidth:120
+            key: 'device_key',
+            minWidth: 120
           },
           {
             title: "在线状态",
-            key: "",
-            minWidth:120
+            key: "online_status",
+            minWidth: 120,
+            render:(h,p)=>{
+              let a = p.row.online_status== ""?'离线':'在线'
+              return h('div',a)
+            }
           },
           {
             title: "店铺名称",
             key: "shop_name",
-            minWidth:120
+            minWidth: 120
           },
           {
             title: "负责人",
             key: "manager_name",
-            minWidth:120
+            minWidth: 120
           },
           {
             title: "联系电话",
             key: "phone",
-            minWidth:120
+            minWidth: 120
           },
           {
             title: "性别",
             key: "gender",
-            minWidth:120,
-            render:(h,p)=>{
+            minWidth: 120,
+            render: (h, p) => {
               let a = '先生'
-              if(p.row.gender == "M"){
+              if (p.row.gender == "M") {
                 a = '女士'
               }
-              return h('div',a)
+              return h('div', a)
             }
 
           },
           {
             title: "(1号屏幕)",
             key: "",
-            minWidth:120
+            minWidth: 120,
+            render:(h,p)=>{
+              let a = ''
+              p.row.media.forEach((it,index)=>{
+                if(it.position_type == "1"){
+                  a = it.group_name
+                }
+              })
+              return h('div',a)
+            }
           },
           {
             title: "(2号屏幕)",
             key: "",
-            minWidth:120
+            minWidth: 120,
+            render:(h,p)=>{
+              let a = ''
+              p.row.media.forEach((it,index)=>{
+                if(it.position_type == "2"){
+                  a = it.group_name
+                }
+              })
+              return h('div',a)
+            }
           },
           {
             title: "(3号屏幕)",
             key: "",
-            minWidth:120
+            minWidth: 120,
+            render:(h,p)=>{
+              let a = ''
+              p.row.media.forEach((it,index)=>{
+                if(it.position_type == "3"){
+                  a = it.group_name
+                }
+              })
+              return h('div',a)
+            }
           },
           {
             title: "分屏模式",
-            key: "",
-            minWidth:120
+            key: "split_type",
+            minWidth: 120,
+            render: (h, p) => {
+              return h('div', '分' + p.row.split_type + '块')
+            }
           },
           {
             title: "操作",
-            fixed:"right",
-            align:'center',
-            minWidth:140,
+            fixed: "right",
+            align: 'center',
+            minWidth: 140,
             render: (h, p) => {
               return h('div', [
                 h('Button', {
-                  style:{
-                    marginRight:'16px'
+                  style: {
+                    marginRight: '16px'
                   },
                   props: {
                     type: 'info',
@@ -171,17 +215,17 @@
           //   "updatetime": 0
           // }
         ],
-        PageTotal:0,
-        params:{
-          limit: 10 ,
-          offset:0
+        PageTotal: 0,
+        params: {
+          limit: 10,
+          offset: 0
         },
-        tabSelectAllList:[],
-        modelType:"scrn",
-        compName:"",
-        itemMess:'',
-        ids:'',
-        position_type:''
+        tabSelectAllList: [],
+        modelType: "scrn",
+        compName: "",
+        itemMess: '',
+        ids: '',
+        position_type: ''
       }
     },
     created() {
@@ -197,69 +241,73 @@
       })
     },
     methods: {
-      pagerCh(val){
+      pagerCh(val) {
         console.log(val);
-        this.params.offset = (val-1)*this.params.limit
+        this.params.offset = (val - 1) * this.params.limit
         this.getDatalist()
       },
-      getDatalist(){
-        this.$http.get('http://180g1187v9.51mypc.cn:8090/ajaxapi/admin/device_list',{
+      getDatalist() {
+        this.$http.get('/admin/device_list', {
           params: this.params
-        }).then(res=>{
-          if(res.success){
+        }).then(res => {
+          if (res.success) {
             console.log(res);
             this.tabData = res.data.devices
             this.PageTotal = res.data.total
           }
+        }).catch(err => {
+        })
+        this.getScroll()
+      },
+      getScroll(){
+        this.$http.get('/admin/device_scroll').then(res=>{
+          if(res.success){
+            this.device_scroll = res.data
+          }
         }).catch(err=>{})
       },
-      tabList(callback){
+      saveScroll(){
+        this.$http.post('/admin/update_device_scroll',{scroll_text:this.device_scroll}).then(res=>{
+          if(res.success){
+            this.scrollEvent = true
+          }
+        }).catch(err=>{})
+
+      },
+      tabList(callback) {
         let Bol = false
         let ids = []
-        if(this.tabSelectAllList.length>0){
+        if (this.tabSelectAllList.length > 0) {
           Bol = true
-          this.tabSelectAllList.forEach((it,index)=>{
+          this.tabSelectAllList.forEach((it, index) => {
             ids.push(it.id)
           })
         }
-        callback && callback(Bol,ids)
+        callback && callback(Bol, ids)
 
       },
-      selectFP(){
+      selectFP() {
         var v = this
-        this.tabList((val)=>{
-          if(val)
-          {
-            v.compName='eventModel';
-            v.modelType='scrn';
-          }
-          else{
-            v.swal({
-              title:"请选择要编辑的广告位",
-              type:"warning"
-            })
-          }
-        })
+        v.compName = 'eventModel';
       },
-      bindAD(num){
+      bindAD(num) {
         var v = this
-        this.tabList((val,ids)=>{
-          if(val)
-          {
-            console.log('123',ids);
+        this.tabList((val, ids) => {
+          if (val) {
+            console.log('123', ids);
             this.ids = ids
             this.position_type = num
             this.compName = 'adGroupList'
           }
-          else{
+          else {
             v.swal({
-              title:"请选择要编辑的广告位",
-              type:"warning"
+              title: "请选择要编辑的广告位",
+              type: "warning"
             })
           }
         })
       },
-      tabSelectAll(list){
+      tabSelectAll(list) {
         console.log(list);
         this.tabSelectAllList = list
       },
@@ -267,25 +315,26 @@
         console.log(list);
         this.tabSelectAllList = list
       },
-      upBoxModal(p){
+      upBoxModal(p) {
         this.itemMess = p.row
         this.compName = 'upData'
       },
-      remove(p){
+      remove(p) {
         var v = this
         this.swal({
-          title:'确定删除广告位？',
-          type:'warning',
+          title: '确定删除广告位？',
+          type: 'warning',
           showCancelButton: true,
           confirmButtonText: '删除！',
           cancelButtonText: '取消'
-        }).then(()=>{
-          v.$http.post('/admin/delete_device',{device_id:p.row.id}).then(res=>{
-            if(res.success){
+        }).then(() => {
+          v.$http.post('/admin/delete_device', {device_id: p.row.id}).then(res => {
+            if (res.success) {
               v.params.offset = 0
               v.getDatalist()
             }
-          }).catch(err=>{})
+          }).catch(err => {
+          })
         })
       }
     }
