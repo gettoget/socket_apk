@@ -5,23 +5,55 @@
   <div class="box_col newAdpagerSty">
     <div class="pagerTit box_row  colCenter">
       <pager-tit title="广告位管理"></pager-tit>
+      <div class="box_row_100"></div>
+      <CheckboxGroup v-model="search_type" size="large">
+        <Checkbox label="shop_name">
+          <span style="font-size: 16px">店名</span>
+        </Checkbox>
+        <Checkbox label="manager_name">
+          <span style="font-size: 16px">负责人</span>
+        </Checkbox>
+        <Checkbox label="phone">
+          <span style="font-size: 16px">电话</span>
+        </Checkbox>
+        <Checkbox label="tag1">
+          <span style="font-size: 16px">分区</span>
+        </Checkbox>
+        <Checkbox label="tag2">
+          <span style="font-size: 16px">类别</span>
+        </Checkbox>
+        <Checkbox label="tag3">
+          <span style="font-size: 16px">备注</span>
+        </Checkbox>
+      </CheckboxGroup>
+      <Input class="itMargin" v-model="params.keyword" placeholder="店铺名称" style="width: 220px"/>
+      <Button class="itMargin" type="primary" @click="pagerCh(1)">查询</Button>
       <div>
         <Button type="success" class="itMargin" @click="selectFP">分屏统一设置</Button>
       </div>
-      <div class="box_row_100" style="position: relative;margin-left: 15px">
-        <Input v-model="device_scroll" :disabled="scrollEvent">
-          <span slot="prepend">招商文字</span>
-        </Input>
-        <div style="position: absolute;top: 0;right: 0;z-index: 100;">
-          <Button type="warning" class="itMargin" v-if="scrollEvent" @click="scrollEvent=!scrollEvent">编辑</Button>
-          <Button type="success" class="itMargin" v-else  @click="saveScroll">保存</Button>
-        </div>
-      </div>
+    </div>
+    <div class="box_row colCenter" style="margin-bottom: 8px">
       <div class="box_row_100">
-        <div class="box_row rowRight colCenter">
-          <Input class="itMargin" value="" placeholder="店铺名称" style="width: 220px"/>
-          <Button class="itMargin" type="primary">查询</Button>
-        </div>
+        <Input v-model="device_scroll" :disabled="scrollEvent">
+        <span slot="prepend">招商文字</span>
+        </Input>
+      </div>
+      <div style="margin-left: 15px">
+        <Input value="" :disabled="scrollEvent" placeholder="文字大小">
+        <span slot="prepend">文字大小</span>
+        </Input>
+      </div>
+      <div style="margin-left: 15px">
+        文字颜色
+        <ColorPicker value="#fff" :disabled="scrollEvent"/>
+      </div>
+      <div style="margin-left: 15px">
+        背景颜色
+        <ColorPicker value="#000" :disabled="scrollEvent"/>
+      </div>
+      <div style="margin-left: 15px">
+        <Button type="warning" class="itMargin" v-if="scrollEvent" @click="scrollEvent=!scrollEvent">编辑</Button>
+        <Button type="success" class="itMargin" v-else @click="saveScroll">保存</Button>
       </div>
     </div>
 
@@ -61,8 +93,8 @@
     data() {
       return {
         tabHeader: null,
-        device_scroll:'',
-        scrollEvent:true,
+        device_scroll: '',
+        scrollEvent: true,
         tabTit: [
           {
             type: "selection",
@@ -78,9 +110,9 @@
             title: "在线状态",
             key: "online_status",
             minWidth: 120,
-            render:(h,p)=>{
-              let a = p.row.online_status== ""?'离线':'在线'
-              return h('div',a)
+            render: (h, p) => {
+              let a = p.row.online_status == "" ? '离线' : '在线'
+              return h('div', a)
             }
           },
           {
@@ -109,48 +141,62 @@
               }
               return h('div', a)
             }
-
+          },
+          {
+            title: "所属分区",
+            key: "tag1",
+            minWidth: 120
+          },
+          {
+            title: "所属类别",
+            key: "tag2",
+            minWidth: 120
+          },
+          {
+            title: "备注信息",
+            key: "tag3",
+            minWidth: 120
           },
           {
             title: "(1号屏幕)",
             key: "",
             minWidth: 120,
-            render:(h,p)=>{
+            render: (h, p) => {
               let a = ''
-              p.row.media.forEach((it,index)=>{
-                if(it.position_type == "1"){
+              p.row.media.forEach((it, index) => {
+                if (it.position_type == "1") {
                   a = it.group_name
                 }
               })
-              return h('div',a)
+              return h('div', a)
             }
           },
           {
             title: "(2号屏幕)",
             key: "",
             minWidth: 120,
-            render:(h,p)=>{
+            render: (h, p) => {
               let a = ''
-              p.row.media.forEach((it,index)=>{
-                if(it.position_type == "2"){
+              p.row.media.forEach((it, index) => {
+                if (it.position_type == "2") {
                   a = it.group_name
                 }
               })
-              return h('div',a)
+              return h('div', a)
             }
           },
           {
             title: "(3号屏幕)",
             key: "",
             minWidth: 120,
-            render:(h,p)=>{
+            render: (h, p) => {
               let a = ''
-              p.row.media.forEach((it,index)=>{
-                if(it.position_type == "3"){
+              p.row.media.forEach((it, index) => {
+                if (it.position_type == "3") {
                   a = it.group_name
                 }
               })
-              return h('div',a)
+              return h('div', a)
             }
           },
           {
@@ -216,9 +262,12 @@
           // }
         ],
         PageTotal: 0,
+        search_type: [],
         params: {
           limit: 10,
-          offset: 0
+          offset: 0,
+          search_type: "",//搜索字段
+          keyword: "",
         },
         tabSelectAllList: [],
         modelType: "scrn",
@@ -226,6 +275,12 @@
         itemMess: '',
         ids: '',
         position_type: ''
+      }
+    },
+    watch: {
+      search_type: function (n, o) {
+        console.log(n);
+        this.params.search_type = JSON.stringify(n)
       }
     },
     created() {
@@ -259,19 +314,21 @@
         })
         this.getScroll()
       },
-      getScroll(){
-        this.$http.get('/admin/device_scroll').then(res=>{
-          if(res.success){
+      getScroll() {
+        this.$http.get('/admin/device_scroll').then(res => {
+          if (res.success) {
             this.device_scroll = res.data
           }
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
-      saveScroll(){
-        this.$http.post('/admin/update_device_scroll',{scroll_text:this.device_scroll}).then(res=>{
-          if(res.success){
+      saveScroll() {
+        this.$http.post('/admin/update_device_scroll', {scroll_text: this.device_scroll}).then(res => {
+          if (res.success) {
             this.scrollEvent = true
           }
-        }).catch(err=>{})
+        }).catch(err => {
+        })
 
       },
       tabList(callback) {

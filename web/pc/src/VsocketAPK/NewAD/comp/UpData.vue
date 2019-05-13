@@ -33,6 +33,25 @@
             </FormItem>
           </Col>
         </Row>
+        <Row :gutter="20">
+          <Col span="12">
+            <FormItem label="所属分区">
+              <Input v-model="formData.tag1" placeholder="所属分区"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="所属类型" >
+              <Input v-model="formData.tag2" placeholder="所属类型"></Input>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="20">
+          <Col span="24">
+            <FormItem label="备注信息">
+              <Input v-model="formData.tag3" type="textarea" :autosize="{ minRows: 4, maxRows: 4 }" placeholder="备注信息" />
+            </FormItem>
+          </Col>
+        </Row>
         <FormItem label="分屏模式" prop="split_type">
           <RadioGroup size="large" v-model="formData.split_type">
             <Radio label="1">
@@ -72,7 +91,10 @@
           shop_name:'',//店铺名称
           manager_name:'',//负责人
           phone:'',
-          gender:''
+          gender:'',
+          tag1:'',
+          tag2:'',
+          tag3:''
         },
         ruleValidate: {
           shop_name:[
