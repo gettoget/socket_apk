@@ -5,7 +5,9 @@ import qs from 'qs';
 import iView from 'iview'
 import ajaxUrl from './api'
 // 订单分配权限
- let url = ajaxUrl.url
+let url = ajaxUrl.url
+
+
 
 let httpInstance = axios.create({
   baseURL: url,

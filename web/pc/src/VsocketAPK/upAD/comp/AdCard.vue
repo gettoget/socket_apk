@@ -26,13 +26,21 @@
       </div>
 
       <div class="">
+        <!--<div>-->
+          <!--统一发布-->
+        <!--</div>-->
         <div>
-          统一发布
+          <Button type="primary" @click="butGroup = !butGroup" size="small">
+            <span v-if="!butGroup">屏幕统一发布</span>
+            <span v-else>发布结束</span>
+          </Button>
         </div>
-        <div class="box_row rowAuto">
-          <Button type="info" @click="fb(1)">一号屏</Button>
-          <Button type="success" @click="fb(2)">二号屏</Button>
-          <Button type="warning" @click="fb(3)">三号屏</Button>
+        <div style="height: 30px;padding-top: 6px">
+          <div class="box_row rowAuto" v-if="butGroup">
+            <Button type="info" @click="fb(1)" size="small">一号屏</Button>
+            <Button type="success" @click="fb(2)" size="small">二号屏</Button>
+            <Button type="warning" @click="fb(3)" size="small">三号屏</Button>
+          </div>
         </div>
       </div>
   </Card>
@@ -50,13 +58,14 @@
     },
     data() {
       return {
+        butGroup:false,
       }
     },
     methods:{
       remove(){
         var v = this
         this.swal({
-          title:"123",
+          title:"确认删除？",
           type:"warning",
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -79,11 +88,24 @@
         this.$emit('adMusic',it)
       },
       fb(postion){
-        this.$http.post('/admin/bind_all_device_group',{group_id:this.itMess.id,position_type:postion}).then(res=>{
-          if(res.success){
-            this.$Message.success('广告'+postion+'号屏幕，发布成功')
+        var v = this
+        this.swal({
+          title:"是否确认,"+postion+"号屏统一发布",
+          type:"warning",
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '发部',
+          cancelButtonText:'取消'
+        }).then(function(val){
+          if(val.value){
+            v.$http.post('/admin/bind_all_device_group',{group_id:v.itMess.id,position_type:postion}).then(res=>{
+              if(res.success){
+                v.$Message.success('广告'+postion+'号屏幕，发布成功')
+                v.butGroup = false
+              }
+            }).catch(err=>{})
           }
-        }).catch(err=>{})
+        })
       }
     }
   }

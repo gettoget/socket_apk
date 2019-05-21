@@ -101,7 +101,7 @@ export default [
         path: '/managerAD',
         name: 'managerAD',
         meta: {
-          title: '广告到期',
+          title: '广告维护',
           icon: 'md-home'
         },
         component: () => import('@/VsocketAPK/managerAD')

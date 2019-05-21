@@ -82,6 +82,14 @@
   export default {
     name: "UpData",
     components: {scrn1, scrn2, scrn3},
+    props:{
+      itemMess:{
+        type:Object,
+        default:()=>{
+          return {}
+        }
+      }
+    },
     data(){
       return {
         modalVal:true,
@@ -110,9 +118,9 @@
       }
     },
     created(){
-      let a = JSON.parse(JSON.stringify(this.$parent.itemMess))
+      let a = JSON.parse(JSON.stringify(this.itemMess))
       this.formData.device_id = a.id
-      this.formData.split_type = a.split_type
+      this.formData.split_type = a.split_type.toString()
       this.formData.shop_name = a.shop_name
       this.formData.manager_name = a.manager_name
       this.formData.phone = a.phone
@@ -126,20 +134,18 @@
               if(res.success){
                 this.$Message.success('数据保存成功');
                 this.cance()
-                this.$parent.getDatalist()
               }
             }).catch(err=>{})
           }
         })
       },
       visible(val) {
-        console.log(val);
         setTimeout(() => {
           this.cance()
         }, 30)
       },
       cance(){
-        this.$parent.compName = ""
+        this.$emit('close')
       }
     }
   }

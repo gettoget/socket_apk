@@ -3,25 +3,13 @@
     <Modal
       v-model="modalShow"
       :mask-closable="false"
-      title="广告续费延期"
+      title="广告播放时长统一维护"
       @on-visible-change="visible">
 
       <div>
-        <Form :model="formData" label-position="top" inline>
+        <Form :model="formData" label-position="top">
           <FormItem label="播放时长/(秒)_最少3秒_最多60秒">
             <InputNumber :max="60" :min="3" v-model="formData.play_time" style="width: 100%"></InputNumber>
-          </FormItem>
-          <FormItem label="续费时长">
-            <InputNumber :min="15" v-model="formData.expire_days" style="width: 100%"></InputNumber>
-
-            <!--<RadioGroup v-model="formData.expire_days" type="button">-->
-              <!--<Radio label="4">4天</Radio>-->
-              <!--<Radio label="15">15天</Radio>-->
-              <!--<Radio label="30">30天</Radio>-->
-              <!--<Radio label="90">90天</Radio>-->
-              <!--<Radio label="180">180天</Radio>-->
-              <!--<Radio label="360">360天</Radio>-->
-            <!--</RadioGroup>-->
           </FormItem>
         </Form>
       </div>
@@ -37,34 +25,20 @@
 <script>
   export default {
     name: "xf",
-    props:{
-      media_ids:{
-        type:Array,
-        default:()=>{
-          return []
-        }
-      }
-    },
     data() {
       return {
         modalShow: true,
         formData:{
-          media_ids:[],
           play_time:10,
-          expire_days:0
+          media_type:0
         }
       }
     },
     created() {
-      if(this.$parent.media_ids){
-        this.formData.media_ids = this.media_ids
-      }else {
-        this.cancel()
-      }
     },
     methods: {
       upSave(){
-        this.$http.post('/admin/update_expire_media',this.formData).then(res=>{
+        this.$http.post('/admin/update_all_media',this.formData).then(res=>{
           if(res.success){
             this.$Message.success('续期成功');
             this.cancel()

@@ -15,8 +15,8 @@
           <div>
             <h4>媒体文件上传:</h4>
           </div>
-          <load-file :FILE_SIZE="1024" @handleSuccess="handleSuccess">
-            <div style="height: 140px;width: 140px;margin: 60px 0 80px;
+          <load-file :FILE_SIZE="1024*50" @handleSuccess="handleSuccess">
+            <div style="height: 140px;width: 140px;
             text-align: center;line-height: 140px;cursor: pointer;">
               <img v-if="formData.media_type == '0' && formData.file_name"
                    :src="httpLink+formData.file_name" style="width: 100%" alt="">
@@ -39,6 +39,9 @@
               <img v-if="it.media_type == '0'" :src="httpLink+it.file_name" alt="" style="height: 100%;width: 100%">
               <video v-if="it.media_type == '1'" :src="httpLink+it.file_name"  style="height: 100%;width: 100%"></video>
               <div>
+                广告名称：{{it.media_name}}
+              </div>
+              <div>
                 播放时长：{{it.play_time}}(秒)
               </div>
               <div>
@@ -54,6 +57,9 @@
               <img v-if="it.media_type == '0'" :src="it.link" alt="" style="height: 100%;width: 100%">
               <video v-if="it.media_type == '1'" :src="it.link"  style="height: 100%;width: 100%"></video>
               <div>
+                广告名称：{{it.media_name}}
+              </div>
+              <div>
                 播放时长：{{it.play_time}}(秒)
               </div>
               <div>
@@ -66,24 +72,14 @@
 
       <div style="margin-top: 16px">
         <Form :model="formData" label-position="top" inline>
-          <!--<FormItem label="音频文件上传">-->
-            <!--<load-file  @handleSuccess="(url)=>{formData.raUrl = url}">-->
-              <!--<Button v-if="formData.raUrl" type="info" icon="md-cloud-upload">音频以上传,点击重新上传</Button>-->
-              <!--<Button v-else type="text" icon="md-cloud-upload">点击上传</Button>-->
-            <!--</load-file>-->
-          <!--</FormItem>-->
+          <FormItem label="广告名称">
+            <Input v-model="formData.media_name" placeholder="广告名称" />
+          </FormItem>
           <FormItem label="播放时长/(秒)_最少3秒_最多60秒">
             <InputNumber :max="60" :min="3" v-model="formData.play_time" style="width: 100%"></InputNumber>
           </FormItem>
           <FormItem label="广告有效期/(天)">
-            <RadioGroup v-model="formData.expire_days" type="button">
-              <Radio label="4">4天</Radio>
-              <Radio label="15">15天</Radio>
-              <Radio label="30">30天</Radio>
-              <Radio label="90">90天</Radio>
-              <Radio label="180">180天</Radio>
-              <Radio label="360">360天</Radio>
-            </RadioGroup>
+            <InputNumber :min="5" v-model="formData.expire_days" style="width: 100%"></InputNumber>
           </FormItem>
           <FormItem label="操作">
             <Button type="success" @click="upMess">
@@ -94,7 +90,7 @@
       </div>
       <div slot="footer">
         <Button size="large" @click="cancel">取消</Button>
-        <Button size="large" @click="save">完成</Button>
+        <Button size="large" @click="save" v-if="adList.length>0">完成</Button>
       </div>
     </Modal>
   </div>
@@ -125,49 +121,47 @@
         // "play_time":11,
         // "expire_days":30}
         httpLink:'',
-        adList:[
-          // {
-          //   file_name:'https://i.loli.net/2017/08/21/599a521472424.jpg',
-          //   media_type:'0',
-          //   play_time:3,
-          //   expire_days:180,
-          // }
-        ],
+        adList:[],
+        // {
+        //   file_name:'https://i.loli.net/2017/08/21/599a521472424.jpg',
+        //   media_type:'0',
+        //   play_time:3,
+        //   expire_days:180,
+        // }
         media_list:[],
         formData: {
           file_name:'',
           media_type:'0',//....
-          play_time: 3,
-          expire_days: "15"
+          play_time: 10,
+          expire_days: 15,
+          media_name:""
         }
       }
     },
     watch: {
       "formData.input2": function (n, o) {
-        console.log(n);
       }
     },
     created(){
-      console.log('xing');
-      console.log(this.$parent.groupItem);
-      this.media_list = this.$parent.groupItem.media_list
+      this.media_list = this.groupItem.media_list
     },
     methods:{
       handleSuccess(file){
         this.httpLink = file.http_link
         this.formData.file_name = file.file_name
+        this.formData.media_name = file.file_name
         if(this.formData.file_name.split('.')[this.formData.file_name.split('.').length-1]=='mp4'){
           this.formData.media_type = '1'
         }
       },
       upMess(){
-
         this.adList.splice(0,0,this.formData)
         this.formData = {
           file_name:'',
           media_type:'0',
-          play_time: 3,
-          expire_days: "15"
+          play_time: 10,
+          expire_days: 15,
+          media_name:""
         }
       },
       removeItem(it,index){
@@ -185,18 +179,16 @@
       },
       save(){
         let parms = {}
-        parms.group_id = this.$parent.groupItem.id
-        console.log(this.adList.length);
+        parms.group_id = this.groupItem.id
         parms.media_lists = JSON.stringify(this.adList)
         this.$http.post("/admin/group_media",parms).then(res=>{
           if(res.success){
             this.cancel()
-            this.$parent.getDataList()
           }
         }).catch(err=>{})
       },
       cancel(){
-        this.$parent.compName = ''
+        this.$emit('close')
       }
     }
   }

@@ -23,7 +23,7 @@
             <div style="position: relative">
               <Input class="box_row_100" disabled="disabled" type="text" v-model="params.audio_name" placeholder="背景音乐" />
               <div style="position: absolute;right: 0;bottom: 0">
-                <load-file  :FILE_SIZE="2048" :FILE_TYPE="['mp3']" @handleSuccess="handleSuccess">
+                <load-file  :FILE_SIZE="2048*50" :FILE_TYPE="['mp3']" @handleSuccess="handleSuccess">
                   <Button type="info">点击上传音频文件</Button>
                 </load-file>
               </div>
@@ -45,6 +45,14 @@
   export default {
     name: "bgMusic",
     components: {loadFile},
+    props:{
+      groupItem:{
+        type:Object,
+        default:{
+          id:''
+        }
+      }
+    },
     data() {
       return {
         modalShow: true,
@@ -58,7 +66,7 @@
       }
     },
     created(){
-      let a = JSON.parse(JSON.stringify(this.$parent.groupItem))
+      let a = JSON.parse(JSON.stringify(this.groupItem))
       this.params.group_id = a.id
       this.params.group_name = a.group_name
       this.params.audio_name = a.audio_link
@@ -72,14 +80,13 @@
         this.$http.post('/admin/update_group',this.params).then(res => {
           if(res.success){
             this.cancel()
-            this.$parent.getDataList()
           }
         }).catch(err => {
 
         })
       },
       cancel(){
-        this.$parent.compName = ''
+        this.$emit('close')
       }
     }
   }

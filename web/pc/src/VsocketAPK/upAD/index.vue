@@ -7,7 +7,9 @@
       <pager-tit title="广告组管理"></pager-tit>
       <div class="box_row_100">
         <div class="box_row rowRight colCenter">
-          <Button class="itMargin" type="primary" @click="adUp">新建广告组</Button>
+          <Input v-model="params.keyword" placeholder="请输入广告组名称" style="width: 300px" @on-enter="pagerCh(1)"/>
+          <Button type="info" style="margin:0 12px 0 8px" @click="pagerCh(1)">查询</Button>
+          <Button class="itMargin" type="info" @click="adUp">新建广告组</Button>
         </div>
       </div>
     </div>
@@ -21,7 +23,10 @@
     <div style="padding: 12px 0">
       <Page :total="PageTotal" :page-size="params.limit"  @on-change="pagerCh"/>
     </div>
-    <component :is="compName" :groupItem="groupItem"></component>
+    <component :is="compName"
+               :groupItem="groupItem"
+               @close="compName = '',getDataList()"
+    ></component>
   </div>
 </template>
 
@@ -42,7 +47,8 @@
         PageTotal:0,
         params:{
           limit: 6,
-          offset:0
+          offset:0,
+          keyword:''
         },
       }
     },
@@ -55,7 +61,6 @@
     },
     methods: {
       pagerCh(val){
-        console.log(val);
         this.params.offset = (val-1)*this.params.limit
         this.getDataList()
       },

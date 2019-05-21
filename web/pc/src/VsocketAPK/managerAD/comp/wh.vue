@@ -3,25 +3,13 @@
     <Modal
       v-model="modalShow"
       :mask-closable="false"
-      title="广告续费延期"
+      title="广告播放时长维护"
       @on-visible-change="visible">
 
       <div>
-        <Form :model="formData" label-position="top" inline>
+        <Form :model="formData" label-position="top">
           <FormItem label="播放时长/(秒)_最少3秒_最多60秒">
             <InputNumber :max="60" :min="3" v-model="formData.play_time" style="width: 100%"></InputNumber>
-          </FormItem>
-          <FormItem label="续费时长">
-            <InputNumber :min="15" v-model="formData.expire_days" style="width: 100%"></InputNumber>
-
-            <!--<RadioGroup v-model="formData.expire_days" type="button">-->
-              <!--<Radio label="4">4天</Radio>-->
-              <!--<Radio label="15">15天</Radio>-->
-              <!--<Radio label="30">30天</Radio>-->
-              <!--<Radio label="90">90天</Radio>-->
-              <!--<Radio label="180">180天</Radio>-->
-              <!--<Radio label="360">360天</Radio>-->
-            <!--</RadioGroup>-->
           </FormItem>
         </Form>
       </div>
@@ -56,8 +44,8 @@
       }
     },
     created() {
-      if(this.$parent.media_ids){
-        this.formData.media_ids = this.media_ids
+      if(this.media_ids){
+        this.formData.media_ids = JSON.stringify(this.media_ids)
       }else {
         this.cancel()
       }

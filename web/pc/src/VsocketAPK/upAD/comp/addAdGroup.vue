@@ -38,14 +38,13 @@
         var v = this
         this.$http.post('/admin/group',{group_name:this.group_name}).then(res=>{
           if (res.success){
-            debugger
             v.$parent.getDataList()
             v.cancel()
           }
         }).catch(err=>{})
       },
       cancel(){
-        this.$parent.compName = ''
+        this.$emit('close')
       }
     }
   }

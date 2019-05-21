@@ -53,7 +53,8 @@
     data() {
       return {
         // action:'http://mt.xxpt123.com:81/upload',
-        action: 'http://180g1187v9.51mypc.cn:8090/ajaxapi/upload_file',
+        // action: 'http://180g1187v9.51mypc.cn:8090/ajaxapi/upload_file',
+        action:this.apis.UpFileUrl,
         headers:{
           withCredentials: false
         },
@@ -73,7 +74,7 @@
     },
     methods: {
       handleSuccess(res, file) {
-        alert("上传成功")
+        this.$Message.success('上传成功');
         this.$emit("handleSuccess",res.data)
         // this.$emit('handleSuccess', 'http://mt.xxpt123.com:81/img/temp/ce3c0ca016a44795bdce23141f994cce.jpg')
 
@@ -81,8 +82,7 @@
         // console.log(file);
       },
       handleError(file) {
-        alert("上传失败")
-        // console.log(res);
+        this.$Message.error('上传失败');
         console.log(file);
         // this.$emit('handleSuccess', 'http://mt.xxpt123.com:81/img/temp/ce3c0ca016a44795bdce23141f994cce.jpg')
       },

@@ -6,6 +6,10 @@
       title="请选择广告组进行发布"
       @on-visible-change="visible">
       <div>
+        <Input v-model="params.keyword" clearable placeholder="请输入广告组名称" style="width: 300px" @on-enter="pagerCh(1)"/>
+        <Button type="info" style="margin:0 12px 0 8px" @click="pagerCh(1)">查询</Button>
+      </div>
+      <div style="padding: 18px 0">
         <div class="box_row_list">
           <div v-for="(it,index) in dataList">
             <Tag :color="tagindex==index?'red':'cyan'" @click.native="tagEvent(it,index)">{{it.group_name}}</Tag>
@@ -26,6 +30,20 @@
 <script>
   export default {
     name: "adGroup",
+    props:{
+      ids:{
+        type:String,
+        default:()=>{
+          return ""
+        }
+      },
+      positionType:{
+        type:String,
+        default:()=>{
+          return ''
+        }
+      }
+    },
     data() {
       return {
         modalVal: true,
@@ -35,11 +53,19 @@
         PageTotal: 0,
         params: {
           limit: 100,
-          offset: 0
+          offset: 0,
+          keyword:''
         },
+        upIds:""
+      }
+    },
+    watch:{
+      ids:function (n,o) {
+
       }
     },
     created() {
+      this.upIds = this.ids
       this.getDataList()
     },
     methods: {
@@ -48,7 +74,6 @@
         this.tagindex = index
       },
       pagerCh(val) {
-        console.log(val);
         this.params.offset = (val - 1) * this.params.limit
         this.getDataList()
       },
@@ -65,23 +90,22 @@
       },
       save() {
         if (this.group_id != '') {
-          this.$http.post('/admin/bind_device_group',{
-            device_ids:JSON.stringify(this.$parent.ids),
-            position_type:this.$parent.position_type,
+          const par ={
+            device_ids:this.upIds,
+            position_type:this.positionType,
             group_id:this.group_id
-          }).then(res => {
+          }
+          this.$http.post('/admin/bind_device_group',par).then(res => {
             if(res.success){
               this.cance()
-              this.$parent.getDatalist()
             }
           }).catch(err => [])
         }
       },
       cance() {
-        this.$parent.compName = ""
+        this.$emit('close')
       },
       visible(val) {
-        console.log(val);
         setTimeout(() => {
           this.cance()
         }, 30)

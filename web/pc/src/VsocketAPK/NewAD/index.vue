@@ -26,7 +26,12 @@
           <span style="font-size: 16px">备注</span>
         </Checkbox>
       </CheckboxGroup>
-      <Input class="itMargin" v-model="params.keyword" placeholder="店铺名称" style="width: 220px"/>
+      <Input class="itMargin" v-model="params.keyword" placeholder="店铺名称" style="width: 220px" @on-enter="pagerCh(1)"/>
+      <Select v-model="params.online_status" style="width:100px;margin-left: 8px" @on-change="pagerCh(1)">
+        <Option value="2">全部设备</Option>
+        <Option value="1">在线设备</Option>
+        <Option value="0">离线设备</Option>
+      </Select>
       <Button class="itMargin" type="primary" @click="pagerCh(1)">查询</Button>
       <div>
         <Button type="success" class="itMargin" @click="selectFP">分屏统一设置</Button>
@@ -34,22 +39,27 @@
     </div>
     <div class="box_row colCenter" style="margin-bottom: 8px">
       <div class="box_row_100">
-        <Input v-model="device_scroll" :disabled="scrollEvent">
+        <Input v-model="device_scroll.scroll_text" :disabled="scrollEvent">
         <span slot="prepend">招商文字</span>
         </Input>
       </div>
       <div style="margin-left: 15px">
-        <Input value="" :disabled="scrollEvent" placeholder="文字大小">
+        <Input v-model="device_scroll.font_size" type="number" :number="true" :disabled="scrollEvent" placeholder="文字大小">
         <span slot="prepend">文字大小</span>
         </Input>
       </div>
       <div style="margin-left: 15px">
         文字颜色
-        <ColorPicker value="#fff" :disabled="scrollEvent"/>
+        <ColorPicker v-model="device_scroll.font_colour" :disabled="scrollEvent"/>
       </div>
       <div style="margin-left: 15px">
         背景颜色
-        <ColorPicker value="#000" :disabled="scrollEvent"/>
+        <ColorPicker v-model="device_scroll.backgroud_colour" :disabled="scrollEvent"/>
+      </div>
+      <div style="margin-left: 15px">
+        <Input v-model="device_scroll.play_speed" type="number" :number="true" :disabled="scrollEvent" placeholder="播放数度">
+        <span slot="prepend">播放数度</span>
+        </Input>
       </div>
       <div style="margin-left: 15px">
         <Button type="warning" class="itMargin" v-if="scrollEvent" @click="scrollEvent=!scrollEvent">编辑</Button>
@@ -68,16 +78,21 @@
       <div class="eventButSty ">
         <!--<Button type="primary" class="itMargin" @click="selectFP">分屏批量设置</Button>-->
 
-        <Button type="success" class="itMargin" @click="bindAD(1)">1号屏幕设置</Button>
-        <Button type="success" class="itMargin" @click="bindAD(2)">2号屏幕设置</Button>
-        <Button type="success" class="itMargin" @click="bindAD(3)">3号屏幕设置</Button>
+        <Button type="success" class="itMargin" @click="bindAD('1')">1号屏幕设置</Button>
+        <Button type="success" class="itMargin" @click="bindAD('2')">2号屏幕设置</Button>
+        <Button type="success" class="itMargin" @click="bindAD('3')">3号屏幕设置</Button>
       </div>
     </div>
     <div class="RowPager">
       <Page :total="PageTotal" :page-size="params.limit" @on-change="pagerCh"/>
     </div>
 
-    <component :is="compName" :modelType="modelType"></component>
+    <component :is="compName"
+               :ids="ids"
+               :itemMess="itemMess"
+               :positionType="position_type"
+               @close="compName = '',getDatalist(),ids=''"
+    ></component>
   </div>
 </template>
 
@@ -93,7 +108,14 @@
     data() {
       return {
         tabHeader: null,
-        device_scroll: '',
+
+        device_scroll: {
+          scroll_text: "",//招商文字
+          font_size: "",//字体大小
+          font_colour: "",//字体颜色
+          backgroud_colour: "",//背景色
+          play_speed: "",//播放数度
+        },
         scrollEvent: true,
         tabTit: [
           {
@@ -111,8 +133,12 @@
             key: "online_status",
             minWidth: 120,
             render: (h, p) => {
-              let a = p.row.online_status == "" ? '离线' : '在线'
-              return h('div', a)
+              let a = p.row.online_status == "0" ? '离线' : '在线'
+              return h('div',{
+                style:{
+                  color:p.row.online_status == "0" ? '#f00' : '#0f0'
+                }
+              }, a)
             }
           },
           {
@@ -268,19 +294,17 @@
           offset: 0,
           search_type: "",//搜索字段
           keyword: "",
+          online_status: "2"
         },
         tabSelectAllList: [],
-        modelType: "scrn",
         compName: "",
-        itemMess: '',
+        itemMess: {},
         ids: '',
         position_type: ''
       }
     },
     watch: {
       search_type: function (n, o) {
-        console.log(n);
-        this.params.search_type = JSON.stringify(n)
       }
     },
     created() {
@@ -297,16 +321,15 @@
     },
     methods: {
       pagerCh(val) {
-        console.log(val);
         this.params.offset = (val - 1) * this.params.limit
         this.getDatalist()
       },
       getDatalist() {
+        this.params.search_type = JSON.stringify(this.search_type)
         this.$http.get('/admin/device_list', {
           params: this.params
         }).then(res => {
           if (res.success) {
-            console.log(res);
             this.tabData = res.data.devices
             this.PageTotal = res.data.total
           }
@@ -323,7 +346,7 @@
         })
       },
       saveScroll() {
-        this.$http.post('/admin/update_device_scroll', {scroll_text: this.device_scroll}).then(res => {
+        this.$http.post('/admin/update_device_scroll', this.device_scroll).then(res => {
           if (res.success) {
             this.scrollEvent = true
           }
@@ -337,7 +360,7 @@
         if (this.tabSelectAllList.length > 0) {
           Bol = true
           this.tabSelectAllList.forEach((it, index) => {
-            ids.push(it.id)
+            ids.push(it.id.toString())
           })
         }
         callback && callback(Bol, ids)
@@ -349,10 +372,9 @@
       },
       bindAD(num) {
         var v = this
-        this.tabList((val, ids) => {
+        this.tabList((val, Nids) => {
           if (val) {
-            console.log('123', ids);
-            this.ids = ids
+            this.ids = JSON.stringify(Nids)
             this.position_type = num
             this.compName = 'adGroupList'
           }
@@ -365,11 +387,9 @@
         })
       },
       tabSelectAll(list) {
-        console.log(list);
         this.tabSelectAllList = list
       },
       tabSelect(list, row) {
-        console.log(list);
         this.tabSelectAllList = list
       },
       upBoxModal(p) {

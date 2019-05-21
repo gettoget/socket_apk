@@ -39,12 +39,6 @@
   export default {
     name: "eventModel",
     components: {scrn1, scrn2, scrn3},
-    props: {
-      modelType: {
-        type: String,
-        default: 'scrn'
-      }
-    },
     data() {
       return {
         modalVal: true,
@@ -56,15 +50,13 @@
         this.$http.post('/admin/update_device_split',{split_type:this.split_type}).then(res=>{
           if(res.success){
             this.cance()
-            this.$parent.getDatalist()
           }
         }).catch(err=>{})
       },
       cance(){
-        this.$parent.compName = ""
+        this.$emit('close')
       },
       visible(val) {
-        console.log(val);
         setTimeout(() => {
           this.cance()
         }, 30)
