@@ -126,7 +126,7 @@
           {
             title: "设备ID",
             key: 'device_key',
-            minWidth: 120
+            minWidth: 180
           },
           {
             title: "在线状态",

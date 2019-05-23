@@ -9,7 +9,7 @@
       <div>
         <Form :model="formData" label-position="top">
           <FormItem label="播放时长/(秒)_最少3秒_最多60秒">
-            <InputNumber :max="60" :min="3" v-model="formData.play_time" style="width: 100%"></InputNumber>
+            <InputNumber :min="1" v-model="formData.play_time" style="width: 100%"></InputNumber>
           </FormItem>
         </Form>
       </div>
