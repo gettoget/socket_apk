@@ -30,7 +30,7 @@
       <div style="margin-right: 20px">
         <Button type="success" @click="compName='allwh'">播放时长统一维护</Button>
       </div>
-      <Page :total="PageTotal" :page-size="params.limit" @on-change="pagerCh"/>
+      <Page show-total :total="PageTotal" :page-size="params.limit" @on-change="pagerCh"/>
     </div>
     <component :is="compName"
                :media_ids="media_ids"
@@ -57,6 +57,13 @@
             type: "selection",
             width: 60,
             align: "center"
+          },
+          {
+            title:"序号",
+            width:100,
+            render: (h, params) => {
+              return h('span', params.index + (this.pagerNumber - 1) * 10 + 1);
+            }
           },
           {
             title: "文件",
@@ -189,6 +196,7 @@
           status: "1",//0:所有广告,1:未过期,2:即将过期(7天),3:已过期
           keyword: '',
         },
+        pagerNumber:1
       }
     },
     watch: {
@@ -235,6 +243,7 @@
         })
       },
       pagerCh(val) {
+        this.pagerNumber = val;
         this.params.offset = (val - 1) * this.params.limit
         this.getDatalist()
       },
@@ -254,14 +263,24 @@
         this.compName = name
       },
       remove(p) {
-        this.$http.post('/admin/delete_media', {media_id: p.row.id}).then(res => {
-          if (res.success) {
-            this.$Message.success('文件删除成功');
-            this.getDatalist()
+        this.swal({
+          title:"确认删除？",
+          type:"warning",
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '删除',
+          cancelButtonText:'取消'
+        }).then(function(val){
+          if(val.value){
+            v.$http.post('/admin/delete_media', {media_id: p.row.id}).then(res => {
+              if (res.success) {
+                v.$Message.success('文件删除成功');
+                v.getDatalist()
+              }
+            }).catch(err => {})
           }
-        }).catch(err => {
-
         })
+
       }
     }
   }

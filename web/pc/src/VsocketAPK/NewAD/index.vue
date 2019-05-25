@@ -124,6 +124,13 @@
             align: "center"
           },
           {
+            title:"序号",
+            width:100,
+            render: (h, params) => {
+              return h('span', params.index + (this.pagerNumber - 1) * 10 + 1);
+            }
+          },
+          {
             title: "设备ID",
             key: 'device_key',
             minWidth: 180
@@ -296,6 +303,7 @@
           keyword: "",
           online_status: "2"
         },
+        pagerNumber:1,
         tabSelectAllList: [],
         compName: "",
         itemMess: {},
@@ -321,6 +329,7 @@
     },
     methods: {
       pagerCh(val) {
+        this.pagerNumber = val
         this.params.offset = (val - 1) * this.params.limit
         this.getDatalist()
       },

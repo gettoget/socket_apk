@@ -47,7 +47,7 @@
     },
     created() {
       if(this.$parent.media_ids){
-        this.formData.media_ids = this.media_ids
+        this.formData.media_ids = JSON.stringify(this.media_ids)
       }else {
         this.cancel()
       }
