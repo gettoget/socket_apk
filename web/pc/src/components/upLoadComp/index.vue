@@ -11,7 +11,8 @@
     :max-size="FILE_SIZE"
     :on-format-error="handleFormatError"
     :on-exceeded-size="handleMaxSize"
-    multiple
+    show-upload-list
+    :multiple="multiple"
     type="select">
       <!--@click="handleError"-->
     <div >
@@ -31,6 +32,10 @@
   export default {
     name: "index",
     props: {
+      multiple:{
+        type: Boolean,
+        default: false
+      },
       FlieUrl: {
         type: String,
         default: ''
@@ -46,7 +51,7 @@
       FILE_TYPE:{
         type:Array,
         default:()=>{
-          return ['jpg','jpeg','png','mp4']
+          return ['jpg','jpeg','png','mp4','qsv']
         }
       }
     },
@@ -76,7 +81,6 @@
       handleSuccess(res, file) {
         this.$Message.success('上传成功');
         this.$emit("handleSuccess",res.data)
-        // this.$emit('handleSuccess', 'http://mt.xxpt123.com:81/img/temp/ce3c0ca016a44795bdce23141f994cce.jpg')
 
         // console.log(res);
         // console.log(file);
